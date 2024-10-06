@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+const db = require('../models');
+const moment = require('moment');
 
 const auth = (req, res ,next) => {
     try{
@@ -25,4 +27,23 @@ const isAdmin = (req, res , next) => {
     }
 }
 
-module.exports = { auth, isAdmin }
+const validateOtp = async (req, res, next)=>{
+    try{
+        const otp = await db.otp_masters.findOne({where:{email: req.body.email, expired: false}});
+        if(!otp){
+            return res.status(200).json({returnCode: 1, msg: 'otp not present!'});
+        }else if(otp.otp !== req.body.otp){
+            return res.status(200).json({returnCode: 1, msg: 'invalid otp!'});
+        }
+        const minuteDifference = moment().diff(otp.createdAt, 'minutes');
+        if(minuteDifference > 3){
+            return res.status(200).json({returnCode: 1, msg: 'otp expired'})
+        }
+        delete req.body.otp;
+        next();
+    }catch(e){
+        return res.status(500).json({ msg: 'Something went wrong!'})
+    }
+}
+
+module.exports = { auth, isAdmin, validateOtp }

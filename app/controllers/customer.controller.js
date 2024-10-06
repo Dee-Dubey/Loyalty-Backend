@@ -2,6 +2,7 @@ const moment = require("moment");
 const db = require("../models");
 const { sendEmail } = require("../utilities/utilities");
 const QRCode = require('qrcode');
+const { v4: uuidv4 } = require('uuid');
 
 const getAllCustomer = async (req, res) => {
     try{
@@ -84,4 +85,38 @@ const createCustomer = async (req, res) => {
     }
 }
 
-module.exports = { getAllCustomer, getCustomerById, createCustomer };
+const generateOtp = async(req, res) =>{
+    const result = {returnCode: 0, msg: 'otp generated successfully!' }
+    try{
+      const randomUUID = uuidv4();
+      const otp = randomUUID.replace(/\D/g, '').substring(0, 4);
+      result.otp = await db.otp_masters.create({otp, email: req.body.email });
+      return res.status(200).json(result);
+    }catch(e){
+      result.message= "failed to generate OTP!";
+      return res.status(500).json(result);
+    }
+}
+
+const getCustomerByEmailId = async (req, res) => {
+    const result = {returnCode: 0, msg: 'customer fetched successfully!' }
+    try{
+        const data = await db.customers.findOne({ where: { email: req.body.email } });
+        result.data = {
+            id: data.id,
+            name: data.name,
+            contact: data.contact,
+            email: data.email,
+            address: data.address,
+            status: data.status,
+            createdAt: data.createdAt
+        }
+        return res.status(200).json(result);
+    }catch(e){
+        console.log(e)
+        result.msg = 'Something went wrong!'
+        return res.status(500).json(result);
+    }
+}
+
+module.exports = { getAllCustomer, getCustomerById, createCustomer, generateOtp, getCustomerByEmailId };

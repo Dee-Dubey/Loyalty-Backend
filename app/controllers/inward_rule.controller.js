@@ -1,4 +1,3 @@
-const { where } = require("sequelize");
 const db = require("../models");
 
 const getAllInwardRule = async (req, res) => {
@@ -67,7 +66,6 @@ const deleteInwardRule = async (req, res) => {
         const result = {returnCode: 0 }
         const {user_id} = req.data;
         const { id } = req.params;
-        console.log(id, user_id)
         await db.inward_rules.destroy({where: {id, user_id}});
         result.msg = 'deleted!';
         return res.status(200).json(result);

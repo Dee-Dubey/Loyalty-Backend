@@ -47,15 +47,17 @@ const redeemPoints = async (req, res) => {
     try{
         const result = {returnCode: 0 }
         const { user_id } = req.data;
-        const data = await db.outward_rules.findAll({where: {user_id}});
-        const { points, amount } = data[0];
-        if(req.body.redeem_points > points){
+        const outward = await db.outward_rules.findOne({where: {user_id}});
+        if(!outward){
+            return res.status(200).json({returnCode:1, msg:'please set the redeem rules first!'})
+        }
+        const balance = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id, user_id}})
+        if(req.body.redeem_points > balance){
             result.returnCode = 1
             result.message = 'reedem points should be less than available points';
             return res.status(200).json(result);
         }
-        req.body.point = req.value.points;
-        req.body.value = 0;
+        req.body.value = points * outward.amount;
         await db.transactions_history.create({...req.body, user_id});
         result.msg = 'redeemed successfully!';
         return res.status(200).json(result);
