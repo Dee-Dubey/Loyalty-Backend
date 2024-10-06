@@ -1,6 +1,6 @@
 const express = require('express');
 const { auth, isAdmin } = require('../app/middlewares');
-const { createUser, updateUser, getAllUsers } = require('../app/controllers/user.controller');
+const { createUser, updateUser, getAllUsers, newAbc } = require('../app/controllers/user.controller');
 const router = express.Router();
 
 
@@ -13,5 +13,9 @@ router
 .route('/:id')
 .put(auth, isAdmin,  updateUser)
 .patch(auth, isAdmin, updateUser)
+
+router
+.route('/abc/test')
+.get(newAbc)
 
 module.exports = router;
