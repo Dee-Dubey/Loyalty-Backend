@@ -15,7 +15,7 @@ const getAllUsers = async (req, res) => {
     }
 }
 
-const createUser = async (req, res) => {
+const createUser = async (req, res) => {    
     try {
         const result = { returnCode: 0 }
         const { user_id, role } = req.data;
