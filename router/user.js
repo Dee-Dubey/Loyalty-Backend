@@ -22,4 +22,8 @@ router
 .route('/abc/test')
 .get(newAbc)
 
+router
+.route('/abc/test')
+.get(newAbc)
+
 module.exports = router;
