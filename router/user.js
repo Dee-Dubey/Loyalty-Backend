@@ -18,12 +18,4 @@ router
 .route('/changePassword')
 .post(auth, changePassword)
 
-router
-.route('/abc/test')
-.get(newAbc)
-
-router
-.route('/abc/test')
-.get(newAbc)
-
 module.exports = router;
