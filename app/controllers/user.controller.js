@@ -20,12 +20,13 @@ const getAllUsers = async (req, res) => {
 const createUser= async (req, res) => {
     try{
         const result = {returnCode: 0 };
-        const { user_id } = req.data;
-        let operationType = "insert";
-        if(req.body.id) 
-            operationType = 'update'
-        result.user = await db.users.upsert({...req.body, user_id});
-        if(operationType === 'insert'){
+        const { user_id } = req.data; 
+        if(!req.body.id){
+            const user = await db.users.findOne({where:{email:req.body.email}});
+            if(user){
+                return res.status(200).json({returnCode:1, msg:'user already exists!'});
+            }
+            result.user = (await db.users.upsert({...req.body, user_id}))[0];
             const url = `http://example.com?user_id=${result.user[0].id}`;
             const qrCodeImage = await QRCode.toDataURL(url);
             sendEmail(req.body.email, "Registered Successfully!", "Dear, Customer thank you for registering under loyality program",
@@ -33,10 +34,13 @@ const createUser= async (req, res) => {
                 );
             result.url = url;
             result.qr_code = qrCodeImage;
+        }else{
+            result.user = (await db.users.upsert({...req.body, user_id}))[0];
         }
         result.msg = 'created successfully!';
         return res.status(200).json(result);
     } catch (e) {
+        console.log(e);
         return res.status(500).json({ msg: 'Something went wrong!' });
     }
 }
