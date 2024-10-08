@@ -27,7 +27,7 @@ const createUser= async (req, res) => {
                 return res.status(200).json({returnCode:1, msg:'user already exists!'});
             }
             result.user = (await db.users.upsert({...req.body, user_id}))[0];
-            const url = `http://example.com?user_id=${result.user[0].id}`;
+            const url = `http://example.com?user_id=${result.user.id}`;
             const qrCodeImage = await QRCode.toDataURL(url);
             sendEmail(req.body.email, "Registered Successfully!", "Dear, Customer thank you for registering under loyality program",
                 `<h1>Hello</h1><p>Here is an embedded base64 image:</p><img src="${qrCodeImage}" alt="Embedded Image" />`
