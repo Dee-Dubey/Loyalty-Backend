@@ -4,10 +4,6 @@ const users = (sequelize, DataTypes)=>{
             type: DataTypes.STRING,
             allowNull: false
         },
-        category: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
         contact: {
             type: DataTypes.STRING,
             allowNull: false
@@ -16,7 +12,19 @@ const users = (sequelize, DataTypes)=>{
             type: DataTypes.STRING,
             allowNull: false
         },
+        currencyType: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
         address: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        businessName: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        businessType: {
             type: DataTypes.STRING,
             allowNull: false
         },

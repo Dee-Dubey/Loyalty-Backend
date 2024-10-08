@@ -3,6 +3,7 @@ const { DBNAME, DBUSER, DBPASSWORD, DBHOST, DBDIALECT } = process.env;
 const { Sequelize, DataTypes } = require('sequelize');
 
 const fs = require('fs');
+const { dataMigration } = require('../../migrations/migration.script');
 const files = fs.readdirSync(`${__dirname}`);
 const models = ((sequelize, DataTypes) => {
     files.forEach((file) => {
@@ -28,8 +29,9 @@ const db = new Sequelize(DBNAME, DBUSER, DBPASSWORD, {
 // });
 
 models(db, DataTypes);
-db.sync({ alter: true }).then((data) => {
-    console.log("db synced..");
+db.sync({ alter: true }).then(async(data) => {
+    console.log("db synced!");
+    await dataMigration(db);
 }).catch(e => {
     console.log(e);
 });
