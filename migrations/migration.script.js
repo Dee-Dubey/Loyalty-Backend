@@ -1,7 +1,6 @@
 const dataMigration = async(db)=>{
     try{
-        const admin = await await db.users.findOne({where:{email:'admin@gmail.com'}});
-        console.log(admin)
+        admin = await await db.users.findOne({where:{email:'admin@gmail.com'}});
         if(!admin){
             let result = await db.users.upsert({
                 name: 'admin',
