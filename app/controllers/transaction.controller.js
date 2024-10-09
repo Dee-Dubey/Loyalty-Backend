@@ -52,12 +52,13 @@ const redeemPoints = async (req, res) => {
             return res.status(200).json({returnCode:1, msg:'please set the redeem rules first!'})
         }
         const balance = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id, user_id}})
-        if(req.body.redeem_points > balance){
+        if(req.body.point > balance){
             result.returnCode = 1
             result.message = 'reedem points should be less than available points';
             return res.status(200).json(result);
         }
-        req.body.value = points * outward.amount;
+        req.body.value = req.body.point * outward.amount;
+        req.body.point= -req.body.point;
         await db.transactions_history.create({...req.body, user_id});
         result.msg = 'redeemed successfully!';
         return res.status(200).json(result);
