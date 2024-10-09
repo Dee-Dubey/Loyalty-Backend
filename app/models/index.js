@@ -16,17 +16,17 @@ const models = ((sequelize, DataTypes) => {
 });
 
 //for postgres connection
-// const db = new Sequelize(DBNAME, DBUSER, DBPASSWORD, {
-//     host: DBHOST,
-//     dialect: DBDIALECT,
-//     logging: false, 
-// });
+const db = new Sequelize(DBNAME, DBUSER, DBPASSWORD, {
+    host: DBHOST,
+    dialect: DBDIALECT,
+    logging: false, 
+});
 
 //for sqlite connection
-const db = new Sequelize({
-    dialect: 'sqlite',
-    storage: './database.sqlite'  // Path to your SQLite file
-});
+// const db = new Sequelize({
+//     dialect: 'sqlite',
+//     storage: './database.sqlite'  // Path to your SQLite file
+// });
 
 models(db, DataTypes);
 db.sync({ alter: true }).then(async(data) => {

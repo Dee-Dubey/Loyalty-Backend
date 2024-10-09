@@ -1,6 +1,6 @@
 const dataMigration = async(db)=>{
     try{
-        admin = await await db.users.findOne({where:{email:'admin@gmail.com'}});
+        const admin = await await db.users.findOne({where:{email:'admin@gmail.com'}});
         if(!admin){
             let result = await db.users.upsert({
                 name: 'admin',
@@ -13,8 +13,6 @@ const dataMigration = async(db)=>{
                 password:'123456',
                 role:'admin'
             });
-
-            console.log(result)
         }
     }catch(e){
         console.log(e);
