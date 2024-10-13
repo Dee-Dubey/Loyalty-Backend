@@ -7,7 +7,7 @@ const getAllOutwardRule = async (req, res) => {
         if(role === 'admin'){
             result.data = await db.outward_rules.findAll();
         }else{
-            result.data = await db.outward_rules.find({ where: { user_id } });
+            result.data = await db.outward_rules.findAll({ where: { user_id } });
         }
         return res.status(200).json(result);
     }catch(e){
