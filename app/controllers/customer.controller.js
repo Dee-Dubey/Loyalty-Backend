@@ -20,14 +20,12 @@ const getAllCustomer = async (req, res) => {
                                 customers c ,
                                 customer_mappings cm
                             where
-                                c.id = cm.customer_id and limit=${limit} and offset=${offset}`
-        if(role !== 'admin'){
-            query+=` and cm.user_id =${user_id}`
-        }
+                                c.id = cm.customer_id ${role!== 'admin'? 'and cm.user_id ='+user_id:''} limit ${limit} offset ${offset}`
         const data = await db.query(query);
         result.data = data[0];
         return res.status(200).json(result);
     }catch(e){
+        console.log(e);
         return res.status(500).json({msg: 'Something went wrong!' });
     }
 }
