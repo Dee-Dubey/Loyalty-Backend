@@ -23,6 +23,7 @@ const isAdmin = (req, res , next) => {
             return res.status(403).json({ msg: 'Permission Denied!', result:{}});
         }
     }catch(e){
+        console.log(e);
         return res.status(500).json({ msg: 'Something went wrong!', result:{}})
     }
 }

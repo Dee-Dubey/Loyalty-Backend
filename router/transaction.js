@@ -21,7 +21,7 @@ router
 .get(auth, getCustomerTransactions)
 
 router
-.route('/user/customer/:id')
+.route('/user/customer')
 .get(auth, getCustomerTransactionByUserId)
 
 module.exports = router;

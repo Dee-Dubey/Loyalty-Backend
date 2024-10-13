@@ -8,8 +8,9 @@ const getAllCustomer = async (req, res) => {
     try{
         const result = {returnCode: 0 }
         const { user_id, role } = req.data;
-        if(role === 'admin'){
-            const data = await db.query(`select
+        const limit = req.query.limit?req.query.limit:10;
+        const offset = req.query.offset?req.query.offset:0;
+        const query = `select
                                 distinct c.id,
                                 c."name" ,
                                 c.email,
@@ -19,23 +20,12 @@ const getAllCustomer = async (req, res) => {
                                 customers c ,
                                 customer_mappings cm
                             where
-                                c.id = cm.customer_id`);
-            result.data = data[0]
-        }else{
-            const data = await db.query(`select
-                            distinct c.id,
-                            c."name" ,
-                            c.email,
-                            c.address,
-                            c.status
-                        from
-                            customers c ,
-                            customer_mappings cm
-                        where
-                            c.id = cm.customer_id
-                            and cm.user_id =${user_id}`);
-            result.data = data[0];
+                                c.id = cm.customer_id and limit=${limit} and offset=${offset}`
+        if(role !== 'admin'){
+            query+=` and cm.user_id =${user_id}`
         }
+        const data = await db.query(query);
+        result.data = data[0];
         return res.status(200).json(result);
     }catch(e){
         return res.status(500).json({msg: 'Something went wrong!' });
@@ -72,7 +62,7 @@ const createCustomer = async (req, res) => {
         }
         const data = await db.customers.create({...req.body, user_id});
         await db.customer_mappings.create({customer_id:data.id, user_id});
-        const url = `http://example.com?customer_id=${data.id}`;
+        const url = `http://localhost:3000/customer?customer_id=${data.id}`;
         const qrCodeImage = await QRCode.toDataURL(url);
         sendEmail(req.body.email, "Registered Successfully!", "Dear, Customer thank you for registering under loyality program",
              `<h1>Hello</h1><p>Here is an embedded base64 image:</p><img src="${qrCodeImage}" alt="Embedded Image" />`

@@ -6,9 +6,9 @@ const getAllTransaction = async (req, res) => {
         const result = {returnCode: 0 }
         const { user_id, role } = req.data;
         if(role === 'admin'){
-            result.data = await db.transactions_history.findAll();
+            result.data = await db.transactions_history.findAll({...req.query});
         }else{
-            result.data = await db.transactions_history.findAll({ where: { user_id } });
+            result.data = await db.transactions_history.findAll({ where: { user_id, ...req.query } });
         }
         return res.status(200).json(result);
     }catch(e){
@@ -20,7 +20,7 @@ const getCustomerTransactions = async (req, res) => {
     try{
         const result = {returnCode: 0 }
         const { id } = req.params;
-        result.data = await db.transactions_history.findAll({ where: { customer_id: id } });
+        result.data = await db.transactions_history.findAll({ where: { customer_id: id, ...req.query } });
         return res.status(200).json(result);
     }catch(e){
         return res.status(500).json({msg: 'Something went wrong!' });
@@ -71,9 +71,8 @@ const redeemPoints = async (req, res) => {
 const getCustomerTransactionByUserId = async (req, res) => {
     try{
         const result = {returnCode: 0 }
-        const { id } = req.params;
         const { user_id } = req.data
-        result.data = await db.transactions_history.findAll({ where: { customer_id: id, user_id } });
+        result.data = await db.transactions_history.findAll({ where: { user_id } });
         return res.status(200).json(result);
     }catch(e){
         return res.status(500).json({msg: 'Something went wrong!' });
