@@ -5,7 +5,7 @@ const customers = (sequelize, DataTypes)=>{
             allowNull: false
         },
         countryCode: {
-            type: DataTypes.BOOLEAN,
+            type: DataTypes.STRING,
             defaultValue: false
         },
         contact: {
