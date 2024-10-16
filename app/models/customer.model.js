@@ -4,6 +4,10 @@ const customers = (sequelize, DataTypes)=>{
             type: DataTypes.STRING,
             allowNull: false
         },
+        countryCode: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
         contact: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -25,7 +29,7 @@ const customers = (sequelize, DataTypes)=>{
         status: {
             type: DataTypes.BOOLEAN,
             defaultValue: false
-        }        
+        }      
       }, {
         timestamps: true
       });

@@ -15,7 +15,9 @@ const getAllCustomer = async (req, res) => {
                                 c."name" ,
                                 c.email,
                                 c.address,
-                                c.status
+                                c.status,
+                                c.contact,
+                                c."countryCode"
                             from
                                 customers c ,
                                 customer_mappings cm
