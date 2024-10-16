@@ -5,11 +5,11 @@ const router = express.Router();
 
 router
 .route('/')
-.get(getAllfeedback)
+.get(auth, isAdmin, getAllfeedback)
 .post(createFeedback);
 
 router
 .route('/:id')
-.delete(deleteFeedback);
+.delete(auth, isAdmin, deleteFeedback);
 
 module.exports = router;

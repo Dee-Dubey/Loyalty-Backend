@@ -18,11 +18,11 @@ const upload = multer({ storage: storage });
 
 router
 .route('/')
-.get(getAllClient)
+.get(auth, isAdmin, getAllClient)
 .post(upload.single('image'), createClient);
 
 router
 .route('/:id')
-.delete(deleteClient);
+.delete(auth, isAdmin, deleteClient);
 
 module.exports = router;
