@@ -1,3 +1,4 @@
+const { ERROR_RESPONSE } = require("../constants");
 const db = require("../models");
 const { sendEmail } = require("../utilities/utilities");
 const QRCode = require('qrcode');
@@ -62,7 +63,7 @@ const updateUser = async (req, res) => {
     }
 }
 
-const changePassword = async () => {
+const changePassword = async (req, res) => {
     const result = {returnCode:0, msg:'password changes successfully'}
     try{
         const {user_id} = req.data;
@@ -74,4 +75,14 @@ const changePassword = async () => {
     }
 }
 
-module.exports = { getAllUsers, createUser, updateUser, changePassword};
+const getUserById = async (req, res) =>{
+    try{
+        const {id} = req.params;
+        const user = await db.users.findOne({where:{id}});
+        return res.status(200).json({returnCode:0, msg: 'user fetched successfully!' ,user});
+    }catch(e){
+        return res.status(500).json(ERROR_RESPONSE);
+    }
+}
+
+module.exports = { getAllUsers, createUser, updateUser, changePassword, getUserById};
