@@ -45,7 +45,7 @@ const getCustomerById = async (req, res) => {
 const createCustomer = async (req, res) => {
     try{
         const result = {returnCode: 0 }
-        const { user_id } = req.data;
+        const { user_id } = req.body;
         const customerDetails = await db.customers.findOne({where: { email: req.body.email}});
         if(customerDetails){
             result.data = {

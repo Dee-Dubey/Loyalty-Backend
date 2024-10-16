@@ -16,7 +16,7 @@ const deleteEnquiry = async(req, res) => {
     try{
         const result = {returnCode:0, msg: 'enquiry deleted successfully!'}
         const {id} = req.params;
-        await db.enqueries.distroy({id});
+        await db.enqueries.destroy({where:{id}});
         return res.status(200).json(result);
     }catch(e){
         return res.status(500).json(ERROR_RESPONSE);

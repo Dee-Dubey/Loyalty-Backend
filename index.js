@@ -6,9 +6,11 @@ app.use(express.urlencoded({extended: true}));
 const cors = require('cors');
 const helmet = require('helmet');
 const { INTERNAL_SERVER_ERROR } = require('./app/constants');
-
+const path = require('path');
 app.use(helmet());
 app.use(cors());
+app.use('/uploads', express.static(path.join(__dirname, 'public')));
+
 app.use('/', require('./router'));
 
 app.use(function (req, res, next) {
@@ -16,6 +18,7 @@ app.use(function (req, res, next) {
 });
 
 app.use((err, req, res, next) => {
+    console.log(err);
     res.status(500).json({returnCode: 500, msg: INTERNAL_SERVER_ERROR});
 });
 
