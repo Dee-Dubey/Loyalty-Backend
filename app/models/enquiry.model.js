@@ -4,6 +4,14 @@ const enqueries = (sequelize, DataTypes)=>{
             type: DataTypes.STRING,
             allowNull: false
         },
+        businessName: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        currencyType: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
         email: {
             type: DataTypes.STRING,
             allowNull: false
@@ -16,7 +24,11 @@ const enqueries = (sequelize, DataTypes)=>{
             type: DataTypes.STRING,
             allowNull: false
         },
-        business_details: {
+        businessDetails: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        businessType: {
             type: DataTypes.STRING,
             allowNull: true
         }

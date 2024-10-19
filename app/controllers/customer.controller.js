@@ -3,6 +3,8 @@ const db = require("../models");
 const { sendEmail } = require("../utilities/utilities");
 const QRCode = require('qrcode');
 const { v4: uuidv4 } = require('uuid');
+const { ERROR_RESPONSE } = require("../constants");
+const jwt = require('jsonwebtoken');
 
 const getAllCustomer = async (req, res) => {
     try{
@@ -28,7 +30,7 @@ const getAllCustomer = async (req, res) => {
         return res.status(200).json(result);
     }catch(e){
         console.log(e);
-        return res.status(500).json({msg: 'Something went wrong!' });
+        return res.status(500).json(ERROR_RESPONSE);
     }
 }
 
@@ -36,11 +38,13 @@ const getCustomerById = async (req, res) => {
     try{
         const result = {returnCode: 0 }
         const { id } = req.params;
-        result.data = await db.customers.findOne({ where: { id } });
+        const { user_id } = req.data;
+        const promises = [ db.transactions_history.sum('point', {where:{customer_id:id, user_id}}), db.customers.findOne({ where: { id } })];
+        result.data = await Promise.all(promises);
         return res.status(200).json(result);
     }catch(e){
         console.log(e)
-        return res.status(500).json({msg: 'Something went wrong!' });
+        return res.status(500).json(ERROR_RESPONSE);
     }
 }
 
@@ -71,20 +75,20 @@ const createCustomer = async (req, res) => {
         return res.status(200).json(result);
     }catch(e){
         console.log(e)
-        return res.status(500).json({msg: 'Something went wrong!' });
+        return res.status(500).json(ERROR_RESPONSE);
     }
 }
 
 const generateOtp = async(req, res) =>{
     const result = {returnCode: 0, msg: 'otp generated successfully!' }
     try{
+      await db.otp_masters.update({expired: true}, {where:{email: req.body.email} })
       const randomUUID = uuidv4();
       const otp = randomUUID.replace(/\D/g, '').substring(0, 4);
       result.otp = await db.otp_masters.create({otp, email: req.body.email });
       return res.status(200).json(result);
     }catch(e){
-      result.message= "failed to generate OTP!";
-      return res.status(500).json(result);
+      return res.status(500).json(ERROR_RESPONSE);
     }
 }
 
@@ -104,9 +108,57 @@ const getCustomerByEmailId = async (req, res) => {
         return res.status(200).json(result);
     }catch(e){
         console.log(e)
-        result.msg = 'Something went wrong!'
-        return res.status(500).json(result);
+        return res.status(500).json(ERROR_RESPONSE);
     }
 }
 
-module.exports = { getAllCustomer, getCustomerById, createCustomer, generateOtp, getCustomerByEmailId };
+const customerLogin = async (req, res) => {
+    try{
+        const { email, password } = req.body;
+        let data = await db.customers.findOne({ where: { email, password, status: true } });
+        if(data){
+            const { id: customer_id, email, role} = data.toJSON();
+            const token = jwt.sign({ data: {customer_id, email, role}}, process.env.TOKEN, { expiresIn: 60 * 60 * 6});
+            const result = { token, customer_id, role }
+            return res.status(200).json({returnCode: 0, msg: 'Login Successful!', result });
+        }else{
+            return res.status(200).json({returnCode: 1, msg: 'invalid credentials!' });
+        }
+    }catch(e){
+        console.log(e);
+        return res.status(500).json(ERROR_RESPONSE);
+    }
+}
+
+const resetPassword = async (req, res) =>{
+    try{
+        await db.customers.update({password: req.body.password},{where: {email: req.body.email}})
+        return res.status(200).json({returnCode:0, msg: 'password reset successfully!'});
+    }catch(e){
+        console.log(e)
+        return res.status(500).json(ERROR_RESPONSE);
+    }
+}
+
+const changePassword = async (req, res) => {
+    const result = {returnCode:0, msg:'password changes successfully'}
+    try{
+        const {customer_id} = req.data;
+        await db.customers.update({password: req.body.password}, {where: {id: customer_id}});
+        return res.status(200).json(result);
+    }catch(e){
+        console.log(e)
+        return res.status(500).json(ERROR_RESPONSE);
+    }
+}
+
+module.exports = { 
+    getAllCustomer, 
+    getCustomerById, 
+    createCustomer, 
+    generateOtp, 
+    getCustomerByEmailId, 
+    customerLogin, 
+    resetPassword, 
+    changePassword 
+};

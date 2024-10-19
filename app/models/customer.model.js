@@ -28,7 +28,7 @@ const customers = (sequelize, DataTypes)=>{
         },
         status: {
             type: DataTypes.BOOLEAN,
-            defaultValue: false
+            defaultValue: true
         }      
       }, {
         timestamps: true

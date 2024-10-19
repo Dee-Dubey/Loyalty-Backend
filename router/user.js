@@ -12,8 +12,8 @@ router
 router
 .route('/:id')
 .get(auth, isAdmin, getUserById)
-.put(auth, isAdmin, updateUser)
-.patch(auth, isAdmin, updateUser);
+.put(auth, updateUser)
+.patch(auth, updateUser);
 
 router
 .route('/changePassword')

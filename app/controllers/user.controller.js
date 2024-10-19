@@ -85,4 +85,14 @@ const getUserById = async (req, res) =>{
     }
 }
 
-module.exports = { getAllUsers, createUser, updateUser, changePassword, getUserById};
+const resetPassword = async (req, res) =>{
+    try{
+        await db.users.update({password: req.body.password},{where: {email: req.body.email}})
+        return res.status(200).json({returnCode:0, msg: 'password reset successfully!'});
+    }catch(e){
+        console.log(e)
+        return res.status(500).json(ERROR_RESPONSE);
+    }
+}
+
+module.exports = { getAllUsers, createUser, updateUser, changePassword, getUserById, resetPassword};

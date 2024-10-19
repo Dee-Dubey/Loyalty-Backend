@@ -43,11 +43,14 @@ const convertEnquiryToUser = async(req, res) =>{
         }else{
             await db.users.create({
                 name: enquiry.name,
-                category: "others",
+                category: enquiry.category,
                 contact: enquiry.contact,
                 email: enquiry.email,
                 address: enquiry.address,
-                password: enquiry.name.split(' ')[0]
+                password: enquiry.name.split(' ')[0],
+                currencyType: enquiry.currencyType,
+                businessName: enquiry.businessName,
+                businessType: enquiry.businessType
             });
             await db.enqueries.destroy({where:{id:enquiry.id}});
         }
