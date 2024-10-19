@@ -39,6 +39,10 @@ const getCustomerById = async (req, res) => {
         const result = {returnCode: 0 }
         const { id } = req.params;
         const { user_id } = req.data;
+        const customer_mappings = await db.customer_mappings.findOne({where:{customer_id:id, user_id}});
+        if(!customer_mappings){
+            await db.customer_mappings.create({customer_id:id, user_id});
+        }
         const promises = [ db.transactions_history.sum('point', {where:{customer_id:id, user_id}}), db.customers.findOne({ where: { id } })];
         result.data = await Promise.all(promises);
         return res.status(200).json(result);

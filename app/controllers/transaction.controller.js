@@ -31,8 +31,11 @@ const addPoints = async (req, res) => {
     try{
         const result = {returnCode: 0 }
         const { user_id } = req.data;
-        const data = await db.inward_rules.findAll({where: {user_id}});
-        const { amount } = data[0];
+        const data = await db.inward_rules.findOne({where: {user_id}});
+        if(!data){
+            return res.status(200).json({returnCode:1, msg:'please set the inward rules first!'})
+        }
+        const { amount } = data;
         req.body.point = parseInt(req.body.amount/amount);
         await db.transactions_history.create({...req.body, user_id});
         result.msg = 'points added successfully!';
