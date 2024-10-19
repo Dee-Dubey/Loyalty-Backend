@@ -11,7 +11,7 @@ router
 
 router
 .route('/:id')
-.get(auth, isAdmin, getUserById)
+.get(auth, getUserById)
 .put(auth, updateUser)
 .patch(auth, updateUser);
 

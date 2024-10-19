@@ -33,4 +33,14 @@ const getAllfeedback = async(req, res) => {
     }
 }
 
-module.exports = {createFeedback, deleteFeedback, getAllfeedback}
+const getFeedbackById = async(req, res) => {
+    try{
+        const result = {returnCode:0, msg: 'feedback fetched!'}
+        result.data = await db.feedbacks.findOne({where:{id: req.params.id}});
+        return res.status(200).json(result);
+    }catch(e){
+        return res.status(500).json(ERROR_RESPONSE);
+    }
+}
+
+module.exports = {createFeedback, deleteFeedback, getAllfeedback, getFeedbackById}
