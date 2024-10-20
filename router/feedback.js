@@ -10,8 +10,8 @@ router
 
 router
 .route('/:id')
-.patch(updateFeedback)
-.put(updateFeedback)
+.patch(auth, isAdmin,updateFeedback)
+.put(auth, isAdmin,updateFeedback)
 .get(auth, isAdmin, getFeedbackById)
 .delete(auth, isAdmin, deleteFeedback);
 
