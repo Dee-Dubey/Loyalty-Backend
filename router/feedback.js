@@ -1,6 +1,6 @@
 const express = require('express');
 const { auth, isAdmin } = require('../app/middlewares');
-const { getAllfeedback, createFeedback, deleteFeedback, getFeedbackById } = require('../app/controllers/feedback.controller');
+const { getAllfeedback, createFeedback, deleteFeedback, getFeedbackById, updateFeedback } = require('../app/controllers/feedback.controller');
 const router = express.Router();
 
 router
@@ -10,6 +10,8 @@ router
 
 router
 .route('/:id')
+.patch(updateFeedback)
+.put(updateFeedback)
 .get(auth, isAdmin, getFeedbackById)
 .delete(auth, isAdmin, deleteFeedback);
 

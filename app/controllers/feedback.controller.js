@@ -43,4 +43,14 @@ const getFeedbackById = async(req, res) => {
     }
 }
 
-module.exports = {createFeedback, deleteFeedback, getAllfeedback, getFeedbackById}
+const updateFeedback = async(req, res) => {
+    try{
+        const result = {returnCode:0, msg: 'feedback updated successfully!'}
+        await db.feedbacks.update({...req.body},{where:{id: req.params.id}});
+        return res.status(200).json(result);
+    }catch(e){
+        return res.status(500).json(ERROR_RESPONSE);
+    }
+}
+
+module.exports = {createFeedback, deleteFeedback, getAllfeedback, getFeedbackById, updateFeedback}
