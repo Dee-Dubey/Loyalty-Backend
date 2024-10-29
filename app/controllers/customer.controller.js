@@ -45,7 +45,14 @@ const getCustomerById = async (req, res) => {
             await db.customer_mappings.create({customer_id:id, company_id});
         }
         const promises = [ db.transactions_history.sum('point', {where:{customer_id:id, company_id}}), db.customers.findOne({ where: { id } })];
-        result.data = await Promise.all(promises);
+        const promiseResult = await Promise.all(promises);
+        if(promiseResult[0] === null || !promiseResult[1] === null){
+            result.returnCode = 1;
+            result.msg = "customer data not found!"
+        }else{
+            result.returnCode = 0;
+        }
+        result.data = promiseResult;
         return res.status(200).json(result);
     }catch(e){
         console.log(e)
