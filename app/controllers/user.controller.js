@@ -1,22 +1,12 @@
 const { ERROR_RESPONSE } = require("../constants");
 const db = require("../models");
-const { sendEmail } = require("../utilities/utilities");
-const QRCode = require('qrcode');
 
 const getAllUsers = async (req, res) => {
     try {
-        const result = { returnCode: 0 }
-        const { user_id, role } = req.data;
-        if (role === 'admin') {
-            result.data = await db.users.findAll({...req.query});
-        } else {
-            result.data = await db.users.findAll({ where: {
-                ...req.query,
-                 user_id 
-            } });
-        }
-        return res.status(200).json(result);
+        const data = await db.users.findAll({where:{...req.query}});
+        return res.status(200).json({ returnCode: 0, msg:'user fetched successfully!', data });
     } catch (e) {
+        console.log(e);
         return res.status(500).json({ msg: 'Something went wrong!' });
     }
 }
@@ -31,13 +21,6 @@ const createUser= async (req, res) => {
                 return res.status(200).json({returnCode:1, msg:'user already exists!'});
             }
             result.user = (await db.users.upsert({...req.body, user_id}))[0];
-            const url = `http://localhost:3000/user?user_id=${result.user.id}`;
-            const qrCodeImage = await QRCode.toDataURL(url);
-            sendEmail(req.body.email, "Registered Successfully!", "Dear, Customer thank you for registering under loyality program",
-                `<h1>Hello</h1><p>Here is an embedded base64 image:</p><img src="${qrCodeImage}" alt="Embedded Image" />`
-                );
-            result.url = url;
-            result.qr_code = qrCodeImage;
         }else{
             result.user = (await db.users.upsert({...req.body, user_id}))[0];
         }
@@ -51,27 +34,22 @@ const createUser= async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        const result = { returnCode: 0 }
-        // const { user_id } = req.data;
         const { id } = req.params;
         await db.users.update({...req.body}, {where:{id}});
-        result.msg = 'user updated successfully!';
-        return res.status(200).json(result);
+        return res.status(200).json({ returnCode: 0, msg:'user updated successfully!' });
     } catch (e) {
         console.log(e)
-        return res.status(500).json({ msg: 'Something went wrong!' });
+        return res.status(500).json(ERROR_RESPONSE);
     }
 }
 
 const changePassword = async (req, res) => {
-    const result = {returnCode:0, msg:'password changes successfully'}
     try{
         const {user_id} = req.data;
         await db.users.update({password: req.body.password}, {where: {id: user_id}});
-        return res.status(200).json(result);
+        return res.status(200).json({returnCode:0, msg:'password changes successfully'});
     }catch(e){
-        result.msg = "something went wrong!"
-        return res.status(500).json(result);
+        return res.status(500).json(ERROR_RESPONSE);
     }
 }
 
@@ -87,7 +65,7 @@ const getUserById = async (req, res) =>{
 
 const resetPassword = async (req, res) =>{
     try{
-        await db.users.update({password: req.body.password},{where: {email: req.body.email}})
+        await db.users.update({password: req.body.password},{where: {username: req.body.username}})
         return res.status(200).json({returnCode:0, msg: 'password reset successfully!'});
     }catch(e){
         console.log(e)

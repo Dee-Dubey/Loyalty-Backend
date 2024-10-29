@@ -1,30 +1,6 @@
 const users = (sequelize, DataTypes)=>{
     return sequelize.define('users', {
-        name: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        contact: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        email: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        currencyType: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        address: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        businessName: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        businessType: {
+        username: {
             type: DataTypes.STRING,
             allowNull: false
         },
@@ -34,14 +10,22 @@ const users = (sequelize, DataTypes)=>{
         },
         role: {
             type: DataTypes.ENUM,
-            values: ['admin', 'user'],
-            defaultValue: 'user',
+            values: ['admin', 'superuser', 'user'],
+            defaultValue: 'superuser',
             allowNull: false
         },
         status: {
             type: DataTypes.BOOLEAN,
             defaultValue: true
-        }        
+        },
+        employee_id:{
+            type: DataTypes.INTEGER,
+            defaultValue: null
+        },
+        company_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        }       
       }, {
         timestamps: true
       });

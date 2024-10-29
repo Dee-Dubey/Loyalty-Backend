@@ -9,9 +9,10 @@ const jwt = require('jsonwebtoken');
 const getAllCustomer = async (req, res) => {
     try{
         const result = {returnCode: 0 }
-        const { user_id, role } = req.data;
+        const { user_id, company_id, role } = req.data;
         const limit = req.query.limit?req.query.limit:10;
         const offset = req.query.offset?req.query.offset:0;
+        let conditions = role=== 'admin'? '':role==='superuser'?`and cm.company_id =${company_id}`:role==='user'?`and cm.user_id =${user_id}`:'';
         const query = `select
                                 distinct c.id,
                                 c."name" ,
@@ -19,12 +20,12 @@ const getAllCustomer = async (req, res) => {
                                 c.address,
                                 c.status,
                                 c.contact,
-                                c."countryCode"
+                                c.country_code
                             from
                                 customers c ,
                                 customer_mappings cm
                             where
-                                c.id = cm.customer_id ${role!== 'admin'? 'and cm.user_id ='+user_id:''} limit ${limit} offset ${offset}`
+                                c.id = cm.customer_id ${conditions} limit ${limit} offset ${offset}`;
         const data = await db.query(query);
         result.data = data[0];
         return res.status(200).json(result);
@@ -38,12 +39,12 @@ const getCustomerById = async (req, res) => {
     try{
         const result = {returnCode: 0 }
         const { id } = req.params;
-        const { user_id } = req.data;
-        const customer_mappings = await db.customer_mappings.findOne({where:{customer_id:id, user_id}});
+        const { company_id } = req.data;
+        const customer_mappings = await db.customer_mappings.findOne({where:{customer_id:id, company_id}});
         if(!customer_mappings){
-            await db.customer_mappings.create({customer_id:id, user_id});
+            await db.customer_mappings.create({customer_id:id, company_id});
         }
-        const promises = [ db.transactions_history.sum('point', {where:{customer_id:id, user_id}}), db.customers.findOne({ where: { id } })];
+        const promises = [ db.transactions_history.sum('point', {where:{customer_id:id, company_id}}), db.customers.findOne({ where: { id } })];
         result.data = await Promise.all(promises);
         return res.status(200).json(result);
     }catch(e){

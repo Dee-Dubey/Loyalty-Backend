@@ -3,7 +3,7 @@ const customer_mappings = (sequelize, DataTypes)=>{
         customer_id: {
             type: DataTypes.INTEGER
         },
-        user_id: {
+        company_id: {
             type: DataTypes.INTEGER
         }     
       }, {

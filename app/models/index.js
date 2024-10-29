@@ -31,7 +31,7 @@ const db = new Sequelize(DBNAME, DBUSER, DBPASSWORD, {
 models(db, DataTypes);
 db.sync({ alter: true }).then(async(data) => {
     console.log("db synced!");
-    await dataMigration(db);
+    // await dataMigration(db);
 }).catch(e => {
     console.log(e);
 });

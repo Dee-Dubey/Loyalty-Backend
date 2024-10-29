@@ -8,10 +8,14 @@ const inward_rules = (sequelize, DataTypes)=>{
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        user_id: {
+        company_id: {
             type: DataTypes.INTEGER,
             allowNull: false
-        }     
+        },
+        created_by: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        }
       }, {
         timestamps: true
       });

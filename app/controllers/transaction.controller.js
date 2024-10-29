@@ -1,14 +1,13 @@
-const { Op } = require("sequelize");
 const db = require("../models");
 
 const getAllTransaction = async (req, res) => {
     try{
         const result = {returnCode: 0 }
-        const { user_id, role } = req.data;
+        const { company_id, role } = req.data;
         if(role === 'admin'){
             result.data = await db.transactions_history.findAll({...req.query});
         }else{
-            result.data = await db.transactions_history.findAll({ where: { user_id, ...req.query } });
+            result.data = await db.transactions_history.findAll({ where: { company_id, ...req.query } });
         }
         return res.status(200).json(result);
     }catch(e){
@@ -30,14 +29,14 @@ const getCustomerTransactions = async (req, res) => {
 const addPoints = async (req, res) => {
     try{
         const result = {returnCode: 0 }
-        const { user_id } = req.data;
-        const data = await db.inward_rules.findOne({where: {user_id}});
+        const { company_id, user_id } = req.data;
+        const data = await db.inward_rules.findOne({where: {company_id}});
         if(!data){
             return res.status(200).json({returnCode:1, msg:'please set the inward rules first!'})
         }
         const { amount } = data;
         req.body.point = parseInt(req.body.amount/amount);
-        await db.transactions_history.create({...req.body, user_id});
+        await db.transactions_history.create({...req.body, company_id, created_by: user_id});
         result.msg = 'points added successfully!';
         return res.status(200).json(result);
     }catch(e){
@@ -49,12 +48,12 @@ const addPoints = async (req, res) => {
 const redeemPoints = async (req, res) => {
     try{
         const result = {returnCode: 0 }
-        const { user_id } = req.data;
-        const outward = await db.outward_rules.findOne({where: {user_id}});
+        const { company_id } = req.data;
+        const outward = await db.outward_rules.findOne({where: {company_id}});
         if(!outward){
             return res.status(200).json({returnCode:1, msg:'please set the redeem rules first!'})
         }
-        const balance = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id, user_id}})
+        const balance = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id, company_id}})
         if(req.body.point > balance){
             result.returnCode = 1
             result.message = 'reedem points should be less than available points';
@@ -62,7 +61,7 @@ const redeemPoints = async (req, res) => {
         }
         req.body.value = req.body.point * outward.amount;
         req.body.point= -req.body.point;
-        await db.transactions_history.create({...req.body, user_id});
+        await db.transactions_history.create({...req.body, company_id});
         result.msg = 'redeemed successfully!';
         return res.status(200).json(result);
     }catch(e){
@@ -74,8 +73,8 @@ const redeemPoints = async (req, res) => {
 const getCustomerTransactionByUserId = async (req, res) => {
     try{
         const result = {returnCode: 0 }
-        const { user_id } = req.data
-        result.data = await db.transactions_history.findAll({ where: { user_id } });
+        const { company_id } = req.data
+        result.data = await db.transactions_history.findAll({ where: { company_id } });
         return res.status(200).json(result);
     }catch(e){
         return res.status(500).json({msg: 'Something went wrong!' });

@@ -1,38 +1,40 @@
-const customers = (sequelize, DataTypes)=>{
-    return sequelize.define('customers', {
+const companies = (sequelize, DataTypes)=>{
+    return sequelize.define('companies', {
         name: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        country_code: {
-            type: DataTypes.STRING,
-            defaultValue: false
-        },
         contact: {
             type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
+            allowNull: false
         },
         email: {
             type: DataTypes.STRING,
-            allowNull: false,
-            unique: true
+            allowNull: false
+        },
+        currencyType: {
+            type: DataTypes.STRING,
+            allowNull: false
         },
         address: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        password: {
+        businessName: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        businessType: {
             type: DataTypes.STRING,
             allowNull: false
         },
         status: {
             type: DataTypes.BOOLEAN,
             defaultValue: true
-        }      
+        }    
       }, {
         timestamps: true
       });
 }
 
-module.exports = {customers};
+module.exports = {companies};

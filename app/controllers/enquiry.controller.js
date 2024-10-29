@@ -41,17 +41,22 @@ const convertEnquiryToUser = async(req, res) =>{
             result.returnCode = 1;
             result.msg = "enquiry not present!"
         }else{
-            await db.users.create({
+            const company = await db.companies.create({
                 name: enquiry.name,
-                category: enquiry.category,
                 contact: enquiry.contact,
                 email: enquiry.email,
-                address: enquiry.address,
-                password: enquiry.name.split(' ')[0],
                 currencyType: enquiry.currencyType,
+                address: enquiry.address,
                 businessName: enquiry.businessName,
                 businessType: enquiry.businessType
             });
+            await db.users.create({
+                username: enquiry.email,
+                password: enquiry.name.replaceAll(" "),
+                role: "superuser",
+                status: true,
+                company_id: company.id
+            })
             await db.enqueries.destroy({where:{id:enquiry.id}});
         }
         return res.status(200).json(result);

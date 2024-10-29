@@ -2,16 +2,12 @@ const dataMigration = async(db)=>{
     try{
         const admin = await await db.users.findOne({where:{email:'admin@gmail.com'}});
         if(!admin){
-            let result = await db.users.upsert({
-                name: 'admin',
-                contact:'9999999999',
-                email:'admin@gmail.com',
-                currencyType:'Rs',
-                address:'',
-                businessName:'',
-                businessType:'',
+            let result = await db.users.create({
+                username: 'admin',
                 password:'123456',
-                role:'admin'
+                role:'admin',
+                status: true,
+                company_id: null
             });
         }
     }catch(e){

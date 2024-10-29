@@ -3,12 +3,8 @@ const db = require("../models");
 const getAllOutwardRule = async (req, res) => {
     try{
         const result = {returnCode: 0 }
-        const { user_id, role } = req.data;
-        if(role === 'admin'){
-            result.data = await db.outward_rules.findAll();
-        }else{
-            result.data = await db.outward_rules.findAll({ where: { user_id } });
-        }
+        const { company_id } = req.data;
+        result.data = await db.outward_rules.findAll({ where: { company_id } });
         return res.status(200).json(result);
     }catch(e){
         return res.status(500).json({msg: 'Something went wrong!' });
@@ -29,8 +25,14 @@ const getOutwardRuleById = async (req, res) => {
 const createOutwardRule = async (req, res) => {
     try{
         const result = {returnCode: 0 }
-        const { user_id, role } = req.data;
-        await db.outward_rules.create({...req.body, user_id});
+        const { company_id, user_id } = req.data;
+        const rules = await db.outward_rules.findOne({ where: { amount: req.body.amount, company_id } });
+        if(rules){
+            result.data = rules;
+            result.msg = "record already exists!";
+            return res.status(200).json(result);
+        }
+        await db.outward_rules.create({...req.body, company_id, created_by: user_id});
         result.msg = 'created!'
         return res.status(200).json(result);
     }catch(e){
@@ -41,9 +43,9 @@ const createOutwardRule = async (req, res) => {
 const updateOutwardRule = async (req, res) => {
     try{
         const result = {returnCode: 0 }
-        const { user_id } = req.data;
+        const { company_id } = req.data;
         const { id } = req.params;
-        const data = await db.outward_rules.update({...req.body}, {where: {id, user_id}});
+        const data = await db.outward_rules.update({...req.body}, {where: {id, company_id}});
         result.msg = 'updated!'
         return res.status(200).json(result);
     }catch(e){
@@ -54,9 +56,9 @@ const updateOutwardRule = async (req, res) => {
 const deleteOutwardRule = async (req, res) => {
     try{
         const result = {returnCode: 0 }
-        const {user_id} = req.data;
+        const {company_id} = req.data;
         const { id } = req.params;
-        await db.outward_rules.destroy({where: {id, user_id}});
+        await db.outward_rules.destroy({where: {id, company_id}});
         result.msg = 'deleted!';
         return res.status(200).json(result);
     }catch(e){
