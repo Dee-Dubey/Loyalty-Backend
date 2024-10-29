@@ -3,7 +3,8 @@ const db = require("../models");
 
 const createEmployee = async(req, res)=>{
     try{
-        const employee = await db.employees.create({...req.body});
+        const {company_id} = req.data;
+        const employee = await db.employees.create({...req.body, company_id});
         const user = await db.users.create({
             username: req.body.email,
             password: req.body.name.replaceAll(" "),

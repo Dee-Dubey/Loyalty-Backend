@@ -28,6 +28,20 @@ const isAdmin = (req, res , next) => {
     }
 }
 
+const isSuperUser = (req, res , next) => {
+    try{
+        const { role } = req.data;
+        if(role === 'superuser' || role === 'admin'){
+            next();
+        }else{
+            return res.status(403).json({ msg: 'Permission Denied!', result:{}});
+        }
+    }catch(e){
+        console.log(e);
+        return res.status(500).json({ msg: 'Something went wrong!', result:{}})
+    }
+}
+
 const validateOtp = async (req, res, next)=>{
     try{
         const otp = await db.otp_masters.findOne({where:{email: req.body.email, expired: false}});
@@ -48,4 +62,4 @@ const validateOtp = async (req, res, next)=>{
     }
 }
 
-module.exports = { auth, isAdmin, validateOtp }
+module.exports = { auth, isAdmin, validateOtp, isSuperUser }
