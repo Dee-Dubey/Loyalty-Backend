@@ -5,14 +5,14 @@ const router = express.Router();
 
 router
 .route('/')
-.get(auth, isAdmin, getAllfeedback)
+.get(getAllfeedback)
 .post(createFeedback);
 
 router
 .route('/:id')
 .patch(auth, isAdmin,updateFeedback)
 .put(auth, isAdmin,updateFeedback)
-.get(auth, isAdmin, getFeedbackById)
+.get(getFeedbackById)
 .delete(auth, isAdmin, deleteFeedback);
 
 module.exports = router;

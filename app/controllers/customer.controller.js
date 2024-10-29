@@ -39,10 +39,11 @@ const getCustomerById = async (req, res) => {
     try{
         const result = {returnCode: 0 }
         const { id } = req.params;
-        const { company_id } = req.data;
-        const customer_mappings = await db.customer_mappings.findOne({where:{customer_id:id, company_id}});
-        if(!customer_mappings){
-            await db.customer_mappings.create({customer_id:id, company_id});
+        if(req.data.role === 'user' || req.data.role === 'superuser'){
+            const customer_mappings = await db.customer_mappings.findOne({where:{customer_id:id, company_id}});
+            if(!customer_mappings){
+                await db.customer_mappings.create({customer_id:id, company_id});
+            }
         }
         const promises = [ db.transactions_history.sum('point', {where:{customer_id:id, company_id}}), db.customers.findOne({ where: { id } })];
         const promiseResult = await Promise.all(promises);
@@ -63,7 +64,6 @@ const getCustomerById = async (req, res) => {
 const createCustomer = async (req, res) => {
     try{
         const result = {returnCode: 0 }
-        const { user_id } = req.body;
         const customerDetails = await db.customers.findOne({where: { email: req.body.email}});
         if(customerDetails){
             result.data = {
@@ -76,8 +76,8 @@ const createCustomer = async (req, res) => {
             };
             return res.status(200).json(result);
         }
-        const data = await db.customers.create({...req.body, user_id});
-        await db.customer_mappings.create({customer_id:data.id, user_id});
+        const data = await db.customers.create({...req.body});
+        await db.customer_mappings.create({customer_id:data.id, company_id: req.body.company_id});
         const url = `http://localhost:3000/customer?customer_id=${data.id}`;
         const qrCodeImage = await QRCode.toDataURL(url);
         sendEmail(req.body.email, "Registered Successfully!", "Dear, Customer thank you for registering under loyality program",
