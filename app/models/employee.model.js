@@ -10,10 +10,7 @@ const employees = (sequelize, DataTypes)=>{
         email: {
             type: DataTypes.STRING
         },
-        contact: {
-            type: DataTypes.STRING
-        },
-        address: {
+        branch: {
             type: DataTypes.STRING
         },
         status: {

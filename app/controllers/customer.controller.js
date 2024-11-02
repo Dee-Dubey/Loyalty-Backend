@@ -39,6 +39,7 @@ const getCustomerById = async (req, res) => {
     try{
         const result = {returnCode: 0 }
         const { id } = req.params;
+        const {company_id} = req.data;
         if(req.data.role === 'user' || req.data.role === 'superuser'){
             const customer_mappings = await db.customer_mappings.findOne({where:{customer_id:id, company_id}});
             if(!customer_mappings){
@@ -47,7 +48,7 @@ const getCustomerById = async (req, res) => {
         }
         const promises = [ db.transactions_history.sum('point', {where:{customer_id:id, company_id}}), db.customers.findOne({ where: { id } })];
         const promiseResult = await Promise.all(promises);
-        if(promiseResult[0] === null || !promiseResult[1] === null){
+        if(promiseResult[1] === null){
             result.returnCode = 1;
             result.msg = "customer data not found!"
         }else{

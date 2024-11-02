@@ -13,7 +13,7 @@ const createEmployee = async(req, res)=>{
             employee_id: employee.id,
             company_id: employee.company_id
         });
-        return res.status(200).json({returnCode:0, msg:'', employee, user});
+        return res.status(200).json({returnCode:0, msg:'employee created successfully!', employee, user});
     }catch(e){
         console.log(e);
         return res.status(500).json(ERROR_RESPONSE);
