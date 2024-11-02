@@ -4,6 +4,9 @@ const companies = (sequelize, DataTypes)=>{
             type: DataTypes.STRING,
             allowNull: false
         },
+        code: {
+            type: DataTypes.STRING
+        },
         contact: {
             type: DataTypes.STRING,
             allowNull: false
