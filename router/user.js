@@ -1,6 +1,6 @@
 const express = require('express');
-const { auth, isAdmin } = require('../app/middlewares');
-const { createUser, updateUser, getAllUsers, changePassword, getUserById } = require('../app/controllers/user.controller');
+const { auth, isAdmin, validateOtp } = require('../app/middlewares');
+const { createUser, updateUser, getAllUsers, changePassword, getUserById, resetPassword } = require('../app/controllers/user.controller');
 const router = express.Router();
 
 
@@ -18,5 +18,7 @@ router
 router
 .route('/changePassword')
 .post(auth, changePassword)
+.post(validateOtp, resetPassword)
+
 
 module.exports = router;
