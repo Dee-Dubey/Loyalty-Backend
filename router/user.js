@@ -18,6 +18,9 @@ router
 router
 .route('/changePassword')
 .post(auth, changePassword)
+
+router
+.route('/resetPassword')
 .post(validateOtp, resetPassword)
 
 
