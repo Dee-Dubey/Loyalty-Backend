@@ -33,9 +33,8 @@ router
 .route('/change-password')
 .post(auth, changePassword)
 
-
 router
 .route('/profile')
-.get(auth, customerProfile);
+.post(auth, customerProfile);
 
 module.exports = router;

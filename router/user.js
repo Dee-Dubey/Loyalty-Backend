@@ -1,6 +1,6 @@
 const express = require('express');
 const { auth, isAdmin, validateOtp } = require('../app/middlewares');
-const { createUser, updateUser, getAllUsers, changePassword, getUserById, resetPassword } = require('../app/controllers/user.controller');
+const { createUser, updateUser, getAllUsers, changePassword, getUserById, resetPassword, userProfile } = require('../app/controllers/user.controller');
 const router = express.Router();
 
 
@@ -21,7 +21,11 @@ router
 
 router
 .route('/resetPassword')
-.post(validateOtp, resetPassword)
+.post(validateOtp, resetPassword);
+
+router
+.route('/profile')
+.post(auth, userProfile);
 
 
 module.exports = router;

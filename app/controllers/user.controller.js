@@ -73,4 +73,25 @@ const resetPassword = async (req, res) =>{
     }
 }
 
-module.exports = { getAllUsers, createUser, updateUser, changePassword, getUserById, resetPassword};
+const userProfile = async (req, res) =>{
+    try{
+        console.log("jkl")
+        const response = { returnCode:0, msg:'profile fetched successfully!'}
+        const {company_id, user_id, role} = req.data;
+        const resolvedPromises = await Promise.all([
+            await db.users.findOne({where:{id: user_id}}),
+            await db.companies.findOne({where:{id: company_id}})
+        ]);
+        response.user = resolvedPromises[0];
+        response.company = resolvedPromises[1];
+        console.log(resolvedPromises[0].employee_id)
+        if(role === 'user'){
+            response.employee = await db.employees.findOne({where:{id: resolvedPromises[0].employee_id}})
+        }
+        return res.status(200).json(response);
+    }catch(e){
+        return res.status(500).json(ERROR_RESPONSE);
+    }
+}
+
+module.exports = { getAllUsers, createUser, updateUser, changePassword, getUserById, resetPassword, userProfile};
