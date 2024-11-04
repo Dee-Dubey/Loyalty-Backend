@@ -166,6 +166,25 @@ const changePassword = async (req, res) => {
     }
 }
 
+const customerProfile = async (req, res) => {
+    const result = {returnCode:0, msg:'password changes successfully'}
+    try{
+        const {customer_id} = req.data;
+        const resolvedPromises = await Promise.all([
+            await db.customers.findOne({where: {id: customer_id}}),
+            await db.users.findOne({where: {customer_id}}), 
+            await db.transactions_history.sum('point', {where:{customer_id}})
+        ]);
+        result.customer = resolvedPromises[0];
+        result.user = resolvedPromises[1];
+        result.customer = resolvedPromises[2];
+        return res.status(200).json(result);
+    }catch(e){
+        console.log(e)
+        return res.status(500).json(ERROR_RESPONSE);
+    }
+}
+
 module.exports = { 
     getAllCustomer, 
     getCustomerById, 
@@ -174,5 +193,6 @@ module.exports = {
     getCustomerByEmailId, 
     customerLogin, 
     resetPassword, 
-    changePassword 
+    changePassword,
+    customerProfile
 };

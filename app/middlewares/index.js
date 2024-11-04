@@ -44,7 +44,7 @@ const isSuperUser = (req, res , next) => {
 
 const validateOtp = async (req, res, next)=>{
     try{
-        const otp = await db.otp_masters.findOne({where:{email: req.body.email, expired: false}});
+        const otp = await db.otp_masters.findOne({where:{email: req.body.email?req.body.email:req.body.username, expired: false}});
         if(!otp){
             return res.status(200).json({returnCode: 1, msg: 'otp not present!'});
         }else if(+otp.otp !== +req.body.otp){

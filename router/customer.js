@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllCustomer, getCustomerById, createCustomer, generateOtp, getCustomerByEmailId, customerLogin, resetPassword, changePassword } = require('../app/controllers/customer.controller');
+const { getAllCustomer, getCustomerById, createCustomer, generateOtp, getCustomerByEmailId, customerLogin, resetPassword, changePassword, customerProfile } = require('../app/controllers/customer.controller');
 const { auth, validateOtp } = require('../app/middlewares');
 const router = express.Router();
 
@@ -32,5 +32,10 @@ router
 router
 .route('/change-password')
 .post(auth, changePassword)
+
+
+router
+.route('/profile')
+.get(auth, customerProfile);
 
 module.exports = router;
