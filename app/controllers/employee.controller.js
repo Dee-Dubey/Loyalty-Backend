@@ -22,8 +22,9 @@ const createEmployee = async(req, res)=>{
 
 const getAllEmployees = async(req, res)=>{
     try{
-        const {company_id} = req.data;
-        const employees = await db.employees.findAll({where: {company_id}});
+        const {company_id, role} = req.data;
+        const condition = role==='admin'?{}:{where: {company_id}}
+        const employees = await db.employees.findAll(condition);
         return res.status(200).json({returnCode:0, msg:'employees fetched successfully!', employees});
     }catch(e){
         console.log(e);

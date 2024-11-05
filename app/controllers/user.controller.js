@@ -3,7 +3,9 @@ const db = require("../models");
 
 const getAllUsers = async (req, res) => {
     try {
-        const data = await db.users.findAll({where:{...req.query}});
+        const {company_id, role} = req.data;
+        const condition = role==='admin'?{where:{...req.query}}:{where:{...req.query, company_id}}
+        const data = await db.users.findAll(condition);
         return res.status(200).json({ returnCode: 0, msg:'user fetched successfully!', data });
     } catch (e) {
         console.log(e);
