@@ -1,5 +1,5 @@
 const express =  require('express');
-const { getAllCompanies, createCompany, getAllCompanyById, updateCompany, deleteCompany } = require('../app/controllers/company.controller');
+const { getAllCompanies, createCompany, getAllCompanyById, updateCompany, deleteCompany, getCompanyWisePoints } = require('../app/controllers/company.controller');
 const { auth, isAdmin } = require('../app/middlewares');
 const router = express.Router();
 
@@ -14,5 +14,9 @@ router
 .put( auth, isAdmin, updateCompany)
 .patch( auth, isAdmin, updateCompany)
 .delete( auth, isAdmin, deleteCompany)
+
+router
+.route('/totalPoints')
+.post(auth, getCompanyWisePoints)
 
 module.exports = router;

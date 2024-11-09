@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllCustomer, getCustomerById, createCustomer, generateOtp, getCustomerByEmailId, customerLogin, resetPassword, changePassword, customerProfile } = require('../app/controllers/customer.controller');
+const { getAllCustomer, getCustomerById, createCustomer, generateOtp, getCustomerByEmailId, customerLogin, resetPassword, changePassword, customerProfile, getMerchantWisePoints } = require('../app/controllers/customer.controller');
 const { auth, validateOtp } = require('../app/middlewares');
 const router = express.Router();
 
@@ -36,5 +36,9 @@ router
 router
 .route('/profile')
 .post(auth, customerProfile);
+
+router
+.route('/totalPoints')
+.post(auth, getMerchantWisePoints)
 
 module.exports = router;

@@ -183,6 +183,27 @@ const customerProfile = async (req, res) => {
     }
 }
 
+const getMerchantWisePoints = async (req,res) => {
+    try{
+        const {customer_id} = req.data;
+        const result = await db.query(`select
+                            c."businessName",
+                            sum(point) points
+                        from
+                            transactions_histories th ,
+                            companies c
+                        where
+                            th.company_id = c.id
+                            and th.customer_id = ${customer_id}
+                        group by
+                            c."businessName"`);
+        return res.status(200).json({returnCode:0, msg:'', data: result[0]})
+    }catch(e){
+        console.log(e)
+        return res.status(500).json(ERROR_RESPONSE);
+    }
+}
+
 module.exports = { 
     getAllCustomer, 
     getCustomerById, 
@@ -192,5 +213,6 @@ module.exports = {
     customerLogin, 
     resetPassword, 
     changePassword,
-    customerProfile
+    customerProfile,
+    getMerchantWisePoints
 };
