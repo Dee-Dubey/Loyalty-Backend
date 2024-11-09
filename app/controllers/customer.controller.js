@@ -207,9 +207,9 @@ const getMerchantWisePoints = async (req,res) => {
 const getQRCode = async (req,res) => {
     try{
         const {customer_id} = req.data;
-        const url = `http://localhost:4200/customer?id=${customer_id}`;
+        const url = `http://localhost:4200/customer/qr?id=${customer_id}`;
         const qrCodeImage = await QRCode.toDataURL(url);
-        return res.status(200).json({returnCode:0, msg:'QR generated successfully!', qrCodeImage})
+        return res.status(200).json({returnCode:0, msg:'QR generated successfully!', qrCodeImage, url})
     }catch(e){
         console.log(e)
         return res.status(500).json(ERROR_RESPONSE);
