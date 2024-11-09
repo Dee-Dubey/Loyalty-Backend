@@ -77,7 +77,6 @@ const resetPassword = async (req, res) =>{
 
 const userProfile = async (req, res) =>{
     try{
-        console.log("jkl")
         const response = { returnCode:0, msg:'profile fetched successfully!'}
         const {company_id, user_id, role} = req.data;
         const resolvedPromises = await Promise.all([
@@ -86,9 +85,9 @@ const userProfile = async (req, res) =>{
         ]);
         response.user = resolvedPromises[0];
         response.company = resolvedPromises[1];
-        console.log(resolvedPromises[0].employee_id)
         if(role === 'user'){
-            response.employee = await db.employees.findOne({where:{id: resolvedPromises[0].employee_id}})
+            console.log(await db.employees.findOne({where:{id: resolvedPromises[0].dataValues.employee_id}}))
+            response.employee = await db.employees.findOne({where:{id: resolvedPromises[0].dataValues.employee_id}})
         }
         return res.status(200).json(response);
     }catch(e){
