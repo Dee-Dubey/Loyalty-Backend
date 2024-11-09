@@ -5,6 +5,7 @@ const QRCode = require('qrcode');
 const { v4: uuidv4 } = require('uuid');
 const { ERROR_RESPONSE } = require("../constants");
 const jwt = require('jsonwebtoken');
+require('dotenv').config('../../.env');
 
 const getAllCustomer = async (req, res) => {
     try{
@@ -75,12 +76,12 @@ const createCustomer = async (req, res) => {
                 address: customerDetails.address,
                 createdAt: moment(customerDetails.createdAt).format('YYYY-MM-DD HH:mm:ss')
             };
-            result.qr_code = await QRCode.toDataURL(`http://localhost:3000/customer?id=${customerDetails.id}`);
+            result.qr_code = await QRCode.toDataURL(`${process.env.FRONTEND_BASE_URL}customer/qr?id=${customerDetails.id}`);
             return res.status(200).json(result);
         }
         const data = await db.customers.create({...req.body});
         await db.customer_mappings.create({customer_id:data.id, company_id: req.body.company_id});
-        const url = `http://localhost:3000/customer?id=${data.id}`;
+        const url = `${process.env.FRONTEND_BASE_URL}customer/qr?id=${data.id}`;
         const qrCodeImage = await QRCode.toDataURL(url);
         sendEmail(req.body.email, "Registered Successfully!", "Dear, Customer thank you for registering under loyality program",
              `<h1>Hello</h1><p>Here is an embedded base64 image:</p><img src="${qrCodeImage}" alt="Embedded Image" />`
@@ -207,7 +208,7 @@ const getMerchantWisePoints = async (req,res) => {
 const getQRCode = async (req,res) => {
     try{
         const {customer_id} = req.data;
-        const url = `http://localhost:4200/customer/qr?id=${customer_id}`;
+        const url = `${process.env.FRONTEND_BASE_URL}customer/qr?id=${customer_id}`;
         const qrCodeImage = await QRCode.toDataURL(url);
         return res.status(200).json({returnCode:0, msg:'QR generated successfully!', qrCodeImage, url})
     }catch(e){

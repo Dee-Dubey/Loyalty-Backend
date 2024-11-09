@@ -2,6 +2,7 @@ const { ERROR_RESPONSE } = require("../constants");
 const db = require("../models");
 const { sendEmail } = require("../utilities/utilities");
 const QRCode = require('qrcode');
+require('dotenv').config('../../.env');
 
 const createCompany = async(req, res) => {
     try{
@@ -25,7 +26,7 @@ const createCompany = async(req, res) => {
             status: true,
             company_id: company.id
         });
-        const url = `http://localhost:3000/user?company_id=${company.id}`;
+        const url = `${process.env.FRONTEND_BASE_URL}user/qr?company_id=${company.id}`;
         const qrCodeImage = await QRCode.toDataURL(url);
         sendEmail(req.body.email, "Registered Successfully!", "Dear, Customer thank you for registering under loyality program",
         `<h1>Hello</h1><p>Here is an embedded base64 image:</p><img src="${qrCodeImage}" alt="Embedded Image" />`
@@ -100,7 +101,7 @@ const getCompanyWisePoints = async (req,res) => {
 
 const getQRCode = async (req,res) => {
     try{
-        const url = `http://localhost:4200/create-customer`;
+        const url = `${process.env.FRONTEND_BASE_URL}create-customer`;
         const qrCodeImage = await QRCode.toDataURL(url);
         return res.status(200).json({returnCode:0, msg:'QR generated successfully!', qrCodeImage, url})
     }catch(e){
