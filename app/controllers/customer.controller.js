@@ -204,6 +204,18 @@ const getMerchantWisePoints = async (req,res) => {
     }
 }
 
+const getQRCode = async (req,res) => {
+    try{
+        const {customer_id} = req.data;
+        const url = `http://localhost:4200/customer?id=${customer_id}`;
+        const qrCodeImage = await QRCode.toDataURL(url);
+        return res.status(200).json({returnCode:0, msg:'QR generated successfully!', qrCodeImage})
+    }catch(e){
+        console.log(e)
+        return res.status(500).json(ERROR_RESPONSE);
+    }
+}
+
 module.exports = { 
     getAllCustomer, 
     getCustomerById, 
@@ -214,5 +226,6 @@ module.exports = {
     resetPassword, 
     changePassword,
     customerProfile,
-    getMerchantWisePoints
+    getMerchantWisePoints,
+    getQRCode
 };
