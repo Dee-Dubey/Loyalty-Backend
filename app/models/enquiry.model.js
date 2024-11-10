@@ -31,6 +31,10 @@ const enqueries = (sequelize, DataTypes)=>{
         businessType: {
             type: DataTypes.STRING,
             allowNull: true
+        },
+        code: {
+            type: DataTypes.STRING,
+            defaultValue: null
         }
       }, {
         timestamps: true

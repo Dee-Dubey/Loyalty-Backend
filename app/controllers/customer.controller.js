@@ -217,6 +217,17 @@ const getQRCode = async (req,res) => {
     }
 }
 
+const updateCustomer = async (req,res) =>{
+    try{
+        const {id} = req.data;
+        await db.customers.update({...req.body}, {where:{id}});
+        return res.status(200).json({returnCode:0, msg:'customer updated successfully!'});
+    }catch(e){
+        console.log(e)
+        return res.status(500).json(ERROR_RESPONSE);
+    }
+}
+
 module.exports = { 
     getAllCustomer, 
     getCustomerById, 
@@ -228,5 +239,6 @@ module.exports = {
     changePassword,
     customerProfile,
     getMerchantWisePoints,
-    getQRCode
+    getQRCode,
+    updateCustomer
 };

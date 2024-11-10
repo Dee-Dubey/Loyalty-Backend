@@ -48,7 +48,8 @@ const convertEnquiryToUser = async(req, res) =>{
                 currencyType: enquiry.currencyType,
                 address: enquiry.address,
                 businessName: enquiry.businessName,
-                businessType: enquiry.businessType
+                businessType: enquiry.businessType,
+                code: enquiry.code
             });
             await db.users.create({
                 username: enquiry.email,

@@ -4,7 +4,6 @@ const getAllTransaction = async (req, res) => {
     try{
         const result = {returnCode: 0 }
         const { company_id, user_id, role, customer_id } = req.data;
-        console.log(role)
         if(role === 'admin'){
             result.data = await db.transactions_history.findAll({where: {...req.query} });
         }else if(role === 'superuser'){
@@ -36,12 +35,14 @@ const addPoints = async (req, res) => {
         const result = {returnCode: 0 }
         const { company_id, user_id, username } = req.data;
         const data = await db.inward_rules.findOne({where: {company_id}});
+        result.previousBalance = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id, company_id}});
         if(!data){
             return res.status(200).json({returnCode:1, msg:'please set the inward rules first!'})
         }
         const { amount } = data;
         req.body.point = parseInt(req.body.amount/amount);
         await db.transactions_history.create({...req.body, company_id, created_by: user_id, username});
+        result.currentBalance = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id, company_id}});
         result.msg = 'points added successfully!';
         return res.status(200).json(result);
     }catch(e){
@@ -55,6 +56,7 @@ const redeemPoints = async (req, res) => {
         const result = {returnCode: 0 }
         const { company_id, user_id, username } = req.data;
         const outward = await db.outward_rules.findOne({where: {company_id}});
+        result.previousBalance = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id, company_id}});
         if(!outward){
             return res.status(200).json({returnCode:1, msg:'please set the redeem rules first!'})
         }
@@ -67,6 +69,7 @@ const redeemPoints = async (req, res) => {
         req.body.value = req.body.point * outward.amount;
         req.body.point= -req.body.point;
         await db.transactions_history.create({...req.body, company_id, created_by: user_id, username});
+        result.currentBalance = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id, company_id}});
         result.msg = 'redeemed successfully!';
         return res.status(200).json(result);
     }catch(e){
