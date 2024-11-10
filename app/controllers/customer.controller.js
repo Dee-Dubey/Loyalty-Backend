@@ -132,9 +132,9 @@ const customerLogin = async (req, res) => {
         const { email, password } = req.body;
         let data = await db.customers.findOne({ where: { email, password, status: true } });
         if(data){
-            const { id: customer_id, email, role} = data.toJSON();
-            const token = jwt.sign({ data: {customer_id, email, role}}, process.env.TOKEN, { expiresIn: 60 * 60 * 6});
-            const result = { token, customer_id, role }
+            const { id: customer_id, email} = data.toJSON();
+            const token = jwt.sign({ data: {customer_id, email, role: 'customer'}}, process.env.TOKEN, { expiresIn: 60 * 60 * 6});
+            const result = { token, customer_id, role: 'customer' }
             return res.status(200).json({returnCode: 0, msg: 'Login Successful!', result });
         }else{
             return res.status(200).json({returnCode: 1, msg: 'invalid credentials!' });

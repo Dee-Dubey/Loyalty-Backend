@@ -12,6 +12,7 @@ const createCompany = async(req, res) => {
         }
         const company = await db.companies.create({
             name: req.body.name,
+            code: req.body.code,
             contact: req.body.contact,
             email: req.body.email,
             currencyType: req.body.currencyType,

@@ -7,6 +7,7 @@ const auth = (req, res ,next) => {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
         let { data } = jwt.verify(token, process.env.TOKEN);
+        console.log(data)
         req.data = data;
         next();
     }catch(e){
