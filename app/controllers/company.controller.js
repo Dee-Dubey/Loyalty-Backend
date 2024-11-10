@@ -21,14 +21,15 @@ const createCompany = async(req, res) => {
         });
         const user = await db.users.create({
             username: req.body.email,
-            password: req.body.name.replaceAll(" "),
+            password: req.body.name.split(" ")[0],
             role: "superuser",
             status: true,
             company_id: company.id
         });
         const url = `${process.env.FRONTEND_BASE_URL}user/qr?company_id=${company.id}`;
         const qrCodeImage = await QRCode.toDataURL(url);
-        sendEmail(req.body.email, "Registered Successfully!", "Dear, Customer thank you for registering under loyality program",
+        sendEmail(req.body.email, "Registered Successfully!", 
+            `Dear, Customer thank you for registering under loyality program your password is ${user.password}`,
         `<h1>Hello</h1><p>Here is an embedded base64 image:</p><img src="${qrCodeImage}" alt="Embedded Image" />`
         );
         return res.status(200).json({url, qrCodeImage, company, user});

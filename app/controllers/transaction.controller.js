@@ -20,8 +20,8 @@ const getAllTransaction = async (req, res) => {
 const getCustomerTransactions = async (req, res) => {
     try{
         const result = {returnCode: 0 }
-        const { customer_id } = req.params;
-        result.data = await db.transactions_history.findAll({ where: { customer_id, ...req.query } });
+        const { id } = req.params;
+        result.data = await db.transactions_history.findAll({ where: { customer_id: id, ...req.query } });
         return res.status(200).json(result);
     }catch(e){
         return res.status(500).json({msg: 'Something went wrong!' });
