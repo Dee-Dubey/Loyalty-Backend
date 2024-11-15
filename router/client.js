@@ -18,7 +18,7 @@ const upload = multer({ storage: storage });
 
 router
 .route('/')
-.get(auth, isAdmin, getAllClient)
+.get(getAllClient)
 .post(upload.single('image'), createClient);
 
 router

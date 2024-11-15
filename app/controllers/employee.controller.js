@@ -7,7 +7,7 @@ const createEmployee = async(req, res)=>{
         const employee = await db.employees.create({...req.body, company_id});
         const user = await db.users.create({
             username: req.body.email,
-            password: req.body.name.replaceAll(" "),
+            password: req.body.name.split(" ")[0],
             role: "user",
             status: true,
             employee_id: employee.id,
