@@ -5,7 +5,7 @@ const files = fs.readdirSync(__dirname);
 
 files.forEach(file =>{
     if(file !== 'index.js')
-        router.use(`api/v1/${file.split('.')[0]}`, require(`./${file}`));
+        router.use(`/api/v1/${file.split('.')[0]}`, require(`./${file}`));
 });
 
 module.exports = router;
