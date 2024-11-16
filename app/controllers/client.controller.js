@@ -1,10 +1,12 @@
 const { ERROR_RESPONSE } = require("../constants");
 const db = require("../models");
 const fs = require('fs');
+require('dotenv').config('../../.env');
+
 const createClient = async(req, res) => {
     try{
         const result = {returnCode:0, msg: 'client uploaded successfully!'}
-        await db.clients.create({name: req.body.name, logo: `localhost:3000/uploads/${req.file.filename}`, description: req.body.description});
+        await db.clients.create({name: req.body.name, logo: `${process.env.BACKEND_BASE_URL}public/${req.file.filename}`, description: req.body.description});
         return res.status(200).json(result);
     }catch(e){
         console.log(e);
