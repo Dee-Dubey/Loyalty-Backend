@@ -1,5 +1,6 @@
 const { ERROR_RESPONSE } = require("../constants");
 const db = require("../models");
+const { sendEmail } = require("../utilities/utilities");
 
 const createEmployee = async(req, res)=>{
     try{
@@ -13,6 +14,9 @@ const createEmployee = async(req, res)=>{
             employee_id: employee.id,
             company_id: employee.company_id
         });
+        sendEmail(req.body.email, "Registered Successfully!", 
+            `You have been registered as an employee loyality program with username - ${req.body.email} and password - ${req.body.name.split(" ")[0]}`
+        );
         return res.status(200).json({returnCode:0, msg:'employee created successfully!', employee, user});
     }catch(e){
         console.log(e);

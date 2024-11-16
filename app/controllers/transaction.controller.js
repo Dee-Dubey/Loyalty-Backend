@@ -1,4 +1,5 @@
 const db = require("../models");
+const { sendEmail } = require("../utilities/utilities");
 
 const getAllTransaction = async (req, res) => {
     try{
@@ -44,6 +45,10 @@ const addPoints = async (req, res) => {
         await db.transactions_history.create({...req.body, company_id, created_by: user_id, username});
         result.currentBalance = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id, company_id}});
         result.msg = 'points added successfully!';
+        const customer = await db.customers.findOne({where:{id: req.body.customer_id}});
+        sendEmail(customer.email, "Points Added!", 
+            `Dear ${customer.name}, \n ${req.body.point} points are added to your wallet`
+        );
         return res.status(200).json(result);
     }catch(e){
         console.log(e);
@@ -71,6 +76,10 @@ const redeemPoints = async (req, res) => {
         await db.transactions_history.create({...req.body, company_id, created_by: user_id, username});
         result.currentBalance = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id, company_id}});
         result.msg = 'redeemed successfully!';
+        const customer = await db.customers.findOne({where:{id: req.body.customer_id}});
+        sendEmail(customer.email, "Points Redeemed!", 
+            `Dear ${customer.name}, \n ${req.body.point} points are redeemed from your wallet`
+        );
         return res.status(200).json(result);
     }catch(e){
         console.log(e);
