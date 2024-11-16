@@ -9,7 +9,7 @@ const { INTERNAL_SERVER_ERROR } = require('./app/constants');
 const path = require('path');
 app.use(helmet());
 app.use(cors());
-app.use('/uploads', express.static(path.join(__dirname, 'public')));
+app.use('/api/uploads', express.static(path.join(__dirname, 'public')));
 
 app.use('/', require('./router'));
 
