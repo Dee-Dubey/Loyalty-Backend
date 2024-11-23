@@ -100,7 +100,8 @@ const generateOtp = async(req, res) =>{
       await db.otp_masters.update({expired: true}, {where:{email: req.body.email} })
       const randomUUID = uuidv4();
       const otp = randomUUID.replace(/\D/g, '').substring(0, 4);
-      result.otp = await db.otp_masters.create({otp, email: req.body.email });
+      await db.otp_masters.create({otp, email: req.body.email });
+      sendEmail(req.body.email, `Your one time password id ${otp}`, ``);
       return res.status(200).json(result);
     }catch(e){
       return res.status(500).json(ERROR_RESPONSE);
