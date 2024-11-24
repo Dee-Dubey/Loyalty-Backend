@@ -220,7 +220,7 @@ const getQRCode = async (req,res) => {
 
 const updateCustomer = async (req,res) =>{
     try{
-        const {id} = req.data;
+        const {id} = req.params;
         await db.customers.update({...req.body}, {where:{id}});
         return res.status(200).json({returnCode:0, msg:'customer updated successfully!'});
     }catch(e){
