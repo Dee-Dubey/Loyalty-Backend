@@ -112,5 +112,18 @@ const getQRCode = async (req,res) => {
     }
 }
 
+const blockCompany = async(req, res)=>{
+    try{
+        const {status} = req.body
+        await Promise.all([
+            await db.companies.update({status}, {where:{id: req.params.id}}),
+            await db.users.update({status}, {where:{company_id: req.params.id}})
+        ])
+        return res.status(200).json({returnCode:0, msg:`company ${status?'unblocked':'blocked'} successfully!`})
+    }catch(e){
+        console.log(e);
+        return res.status(500).json(ERROR_RESPONSE);
+    }
+}
 
-module.exports = {createCompany, getAllCompanies, getAllCompanyById, deleteCompany, updateCompany, getCompanyWisePoints, getQRCode}
+module.exports = {createCompany, getAllCompanies, getAllCompanyById, deleteCompany, updateCompany, getCompanyWisePoints, getQRCode, blockCompany}

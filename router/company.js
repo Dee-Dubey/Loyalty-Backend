@@ -1,5 +1,5 @@
 const express =  require('express');
-const { getAllCompanies, createCompany, getAllCompanyById, updateCompany, deleteCompany, getCompanyWisePoints, getQRCode } = require('../app/controllers/company.controller');
+const { getAllCompanies, createCompany, getAllCompanyById, updateCompany, deleteCompany, getCompanyWisePoints, getQRCode, blockCompany } = require('../app/controllers/company.controller');
 const { auth, isAdmin } = require('../app/middlewares');
 const router = express.Router();
 
@@ -22,5 +22,9 @@ router
 router
 .route('/getQRCode')
 .post(auth, getQRCode)
+
+router
+.route('/block/:id')
+.post(auth, isAdmin, blockCompany)
 
 module.exports = router;

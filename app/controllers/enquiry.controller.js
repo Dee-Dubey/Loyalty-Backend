@@ -53,13 +53,17 @@ const convertEnquiryToUser = async(req, res) =>{
             });
             await db.users.create({
                 username: enquiry.email,
-                password: enquiry.name.replaceAll(" "),
+                password: enquiry.name.split(" ")[0],
                 role: "superuser",
                 status: true,
                 company_id: company.id
             })
             await db.enqueries.destroy({where:{id:enquiry.id}});
         }
+        sendEmail(req.body.email, "Registered Successfully!", 
+            `Dear ${enquiry.name},\n thank you for registering under loyality program your password is ${enquiry.name.split(" ")[0]}`,
+        `<h1></h1>`
+        );
         return res.status(200).json(result);
     }catch(e){
         console.log(e);
