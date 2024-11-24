@@ -58,4 +58,14 @@ const updateEmployee = async(req, res)=>{
     }
 }
 
-module.exports = {createEmployee, getAllEmployees, getEmployeeById, updateEmployee}
+const getEmployeeByCompanyId = async(req, res)=>{
+    try{
+        const employees = await db.employees.findAll({where:{company_id: req.body.id}});
+        return res.status(200).json({returnCode:0, msg:'employees fetched successfully!', employees});
+    }catch(e){
+        console.log(e);
+        return res.status(500).json(ERROR_RESPONSE);
+    }
+}
+
+module.exports = {createEmployee, getAllEmployees, getEmployeeById, updateEmployee, getEmployeeByCompanyId}

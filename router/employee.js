@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllEmployees, createEmployee, getEmployeeById, updateEmployee } = require('../app/controllers/employee.controller');
+const { getAllEmployees, createEmployee, getEmployeeById, updateEmployee, getEmployeeByCompanyId } = require('../app/controllers/employee.controller');
 const { auth, isSuperUser } = require('../app/middlewares');
 const router = express.Router();
 
@@ -13,5 +13,9 @@ router
 .get(auth, isSuperUser, getEmployeeById)
 .patch(auth, isSuperUser, updateEmployee)
 .put(auth, isSuperUser, updateEmployee)
+
+router
+.route('/byCompanyId')
+.post(auth, getEmployeeByCompanyId)
 
 module.exports = router;
