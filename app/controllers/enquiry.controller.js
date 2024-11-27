@@ -41,6 +41,10 @@ const convertEnquiryToUser = async(req, res) =>{
             result.returnCode = 1;
             result.msg = "enquiry not present!"
         }else{
+            const existingCompany = await db.companies.findOne({where: {email: enquiry.email}});
+            if(existingCompany){
+                return res.status(200).json({returnCode:1, msg:'company already registered!', existingCompany})
+            }
             const company = await db.companies.create({
                 name: enquiry.name,
                 contact: enquiry.contact,

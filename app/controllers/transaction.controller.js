@@ -4,7 +4,7 @@ const { sendEmail } = require("../utilities/utilities");
 const getAllTransaction = async (req, res) => {
     try{
         const result = {returnCode: 0 }
-        const { company_id, user_id, role, customer_id } = req.data;
+        const { company_id, user_id, role, customer_id, branch } = req.data;
         if(role === 'admin'){
             result.data = await db.transactions_history.findAll({where: {...req.query} });
         }else if(role === 'superuser'){
@@ -34,7 +34,7 @@ const getCustomerTransactions = async (req, res) => {
 const addPoints = async (req, res) => {
     try{
         const result = {returnCode: 0 }
-        const { company_id, user_id, username } = req.data;
+        const { company_id, user_id, username, branch } = req.data;
         const data = await db.inward_rules.findOne({where: {company_id}});
         result.previousBalance = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id, company_id}});
         if(!data){
@@ -42,7 +42,7 @@ const addPoints = async (req, res) => {
         }
         const { amount } = data;
         req.body.point = parseInt(req.body.amount/amount);
-        await db.transactions_history.create({...req.body,invoice_no:req.body.invoiceNo, company_id, created_by: user_id, username});
+        await db.transactions_history.create({...req.body,invoice_no:req.body.invoiceNo, company_id, created_by: user_id, username, branch});
         result.currentBalance = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id, company_id}});
         result.msg = 'points added successfully!';
         const customer = await db.customers.findOne({where:{id: req.body.customer_id}});
@@ -59,7 +59,7 @@ const addPoints = async (req, res) => {
 const redeemPoints = async (req, res) => {
     try{
         const result = {returnCode: 0 }
-        const { company_id, user_id, username } = req.data;
+        const { company_id, user_id, username, branch } = req.data;
         const outward = await db.outward_rules.findOne({where: {company_id}});
         result.previousBalance = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id, company_id}});
         if(!outward){
@@ -73,7 +73,7 @@ const redeemPoints = async (req, res) => {
         }
         req.body.value = req.body.point * outward.amount;
         req.body.point= -req.body.point;
-        await db.transactions_history.create({...req.body, company_id, created_by: user_id, username});
+        await db.transactions_history.create({...req.body, company_id, created_by: user_id, username, branch});
         result.currentBalance = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id, company_id}});
         result.msg = 'redeemed successfully!';
         const customer = await db.customers.findOne({where:{id: req.body.customer_id}});

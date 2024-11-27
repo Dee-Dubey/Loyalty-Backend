@@ -8,7 +8,7 @@ const createCompany = async(req, res) => {
     try{
         const existingCompany = await db.companies.findOne({where: {email: req.body.email}});
         if(existingCompany){
-            return res.status(200).json({returnCode:1, msg:'company already registered!', existingCompany})
+            return res.status(200).json({returnCode:1, msg:'email already exists!', existingCompany})
         }
         const company = await db.companies.create({
             name: req.body.name,
@@ -29,7 +29,7 @@ const createCompany = async(req, res) => {
         });
         const url = `${process.env.FRONTEND_BASE_URL}user/qr?company_id=${company.id}`;
         const qrCodeImage = await QRCode.toDataURL(url);
-        sendEmail(req.body.email, "Registered Successfully!", 
+        sendEmail(req.body.email, "Registered Successfully!",
             `Dear, Customer thank you for registering under loyality program your password is ${user.password}`,
         `<h1>Hello</h1><p>Here is an embedded base64 image:</p><img src="${qrCodeImage}" alt="Embedded Image" />`
         );

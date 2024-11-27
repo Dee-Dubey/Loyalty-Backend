@@ -5,6 +5,10 @@ const { sendEmail } = require("../utilities/utilities");
 const createEmployee = async(req, res)=>{
     try{
         const {company_id} = req.data;
+        const existingUser = await db.employees.findOne({where: {email: req.body.email}});
+        if(existingUser){
+            return res.status(200).json({returnCode:1, msg:'email already exist!'})
+        }
         const employee = await db.employees.create({...req.body, company_id});
         const user = await db.users.create({
             username: req.body.email,

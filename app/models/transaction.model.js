@@ -39,7 +39,11 @@ const transactions_history = (sequelize, DataTypes)=>{
         created_by: {
             type: DataTypes.INTEGER,
             allowNull: false
-        }         
+        },
+        branch: {
+            type: DataTypes.STRING,
+            allowNull: false
+        }          
       }, {
         timestamps: true
       });

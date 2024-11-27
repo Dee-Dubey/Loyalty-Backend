@@ -6,11 +6,16 @@ const login = async (req, res) => {
         const { username, password } = req.body;
         let data = await db.users.findOne({ where: { username, password } });
         if(data){
-            const { id: user_id, username, role, company_id, status} = data.toJSON();
+            const payload = data.toJSON();
+            const { id: user_id, username, role, company_id, status } = payload;
             if(!status){
                 return res.status(200).json({returnCode: 1, msg: 'user is blocked!',});
             }
-            const token = jwt.sign({ data: {user_id, username, role, company_id}}, process.env.TOKEN, { expiresIn: 60 * 60 * 6});
+            let employee;
+            if(role === 'user'){
+                employee = (await db.employees.findOne({where:{id:payload?.employee_id}})).toJSON();
+            }
+            const token = jwt.sign({ data: {user_id, username, role, company_id, branch: employee?.branch}}, process.env.TOKEN, { expiresIn: 60 * 60 * 6});
             const result = { token, user_id, role }
             return res.status(200).json({returnCode: 0, msg: 'Login Successful!', result });
         }
