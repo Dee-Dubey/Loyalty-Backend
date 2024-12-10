@@ -33,7 +33,8 @@ const createCompany = async(req, res) => {
             `Dear, Customer thank you for registering under loyality program your password is ${user.password}`,
         `<h1>Hello</h1><p>Here is an embedded base64 image:</p><img src="${qrCodeImage}" alt="Embedded Image" />`
         );
-        return res.status(200).json({url, qrCodeImage, company, user});
+        const result = {returnCode:0, url, qrCodeImage, company, user}
+        return res.status(200).json(result);
     }catch(e){
         console.log(e);
         return res.status(500).json(ERROR_RESPONSE);
