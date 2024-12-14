@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
 const sendEmail = async(emailTo, subject, text, htmlContent) =>{
     try{
         const mailOptions = {
-            from: '"Loyality Program" <info@buypassme.com>', // sender address
+            from: '"Passme Points" <info@buypassme.com>', // sender address
             to: emailTo, // list of receivers
             subject: subject, // Subject line
             text: text, // plain text body
