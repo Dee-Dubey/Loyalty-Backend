@@ -1,8 +1,13 @@
 const { ERROR_RESPONSE } = require("../constants");
 const db = require("../models");
+const { sendEmail } = require("../utilities/utilities");
 
 const createEnquiry = async(req, res) => {
     try{
+        const enquiry = await db.enqueries.findOne({where:{email:req.body.email}});
+        if(enquiry){
+            return res.status(200).json({returnCode:1, msg: 'enquiry already exists!'});
+        }
         const result = {returnCode:0, msg: 'enquiry created successfully!'}
         await db.enqueries.create({...req.body});
         return res.status(200).json(result);
