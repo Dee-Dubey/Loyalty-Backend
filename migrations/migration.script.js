@@ -1,9 +1,9 @@
 const dataMigration = async(db)=>{
     try{
-        const admin = await await db.users.findOne({where:{username:'admin@gmail.com'}});
+        const admin = await await db.users.findOne({where:{username:'admin@noemail.com'}});
         if(!admin){
             let result = await db.users.create({
-                username: 'admin@gmail.com',
+                username: 'admin@noemail.com',
                 password:'123456',
                 role:'admin',
                 status: true,
