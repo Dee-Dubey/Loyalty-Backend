@@ -5,6 +5,7 @@ const QRCode = require('qrcode');
 require('dotenv').config('../../.env');
 const fs = require('fs');
 const path = require('path');
+const ejs = require('ejs');
 
 const createCompany = async(req, res) => {
     try{
