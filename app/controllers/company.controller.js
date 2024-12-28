@@ -29,20 +29,20 @@ const createCompany = async(req, res) => {
         });
         const url = `${process.env.FRONTEND_BASE_URL}user/qr?company_id=${company.id}`;
         const qrCodeImage = await QRCode.toDataURL(url);
-        const base64Data = base64String.replace(/^data:image\/(png|jpg|jpeg|gif);base64,/, '');
-          const buffer = Buffer.from(base64Data, 'base64');
-          const ts = Date.now();
-          fs.writeFileSync(`public/${ts}.png`, buffer);
-          ejs.renderFile(path.join(__dirname, 'app','templates', 'companyRegistration.ejs'), { 
-            name: req.body.name,
-            username:req.body.email,
-            password: user.password,
-            qrCodeImage: `${BACKEND_BASE_URL}/api/uploads/${ts}.png`}, 
-            (err, html) => {
-                  sendEmail(req.body.email, "Welcome to PassMe Point!",'', html);
-            });
-        const result = {returnCode:0, url, qrCodeImage, company, user}
-        return res.status(200).json(result);
+        const base64Data = qrCodeImage.replace(/^data:image\/(png|jpg|jpeg|gif);base64,/, '');
+        const buffer = Buffer.from(base64Data, 'base64');
+        const ts = Date.now();
+        fs.writeFileSync(`public/${ts}.png`, buffer);
+        ejs.renderFile(path.join(__dirname, 'app','templates', 'companyRegistration.ejs'), { 
+        name: req.body.name,
+        username:req.body.email,
+        password: user.password,
+        qrCodeImage: `${BACKEND_BASE_URL}/api/uploads/${ts}.png`}, 
+        (err, html) => {
+                sendEmail(req.body.email, "Welcome to PassMe Point!",'', html);
+        });
+    const result = {returnCode:0, url, qrCodeImage, company, user}
+    return res.status(200).json(result);
     }catch(e){
         console.log(e);
         return res.status(500).json(ERROR_RESPONSE);
