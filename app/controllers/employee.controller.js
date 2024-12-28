@@ -18,8 +18,18 @@ const createEmployee = async(req, res)=>{
             employee_id: employee.id,
             company_id: employee.company_id
         });
-        sendEmail(req.body.email, "Registered Successfully!", 
-            `You have been registered as an employee loyality program with username - ${req.body.email} and password - ${req.body.name.split(" ")[0]}`
+        sendEmail(req.body.email, "Welcome to PassMe Point Team!", 
+            `Dear ${req.body.name},
+                Welcome to PassMe Point! We’re excited to have you as part of the team at [Company Name].
+                Your account has been created, and here are your login details:
+                •	Username: ${req.body.email}
+                •	Password: ${req.body.name.split(" ")[0]}
+                You can log in to your account at [https://passmepoints.com/login].
+                Through your account, you’ll have access to tools and features that help manage and enhance the company’s loyalty program effectively. Should you have any questions or need support, please feel free to reach out to your manager or our support team at info@buypassme.com .
+                We’re thrilled to have you on board and look forward to your contributions!
+                Best regards,
+
+                PassMe Point Team`
         );
         return res.status(200).json({returnCode:0, msg:'employee created successfully!', employee, user});
     }catch(e){

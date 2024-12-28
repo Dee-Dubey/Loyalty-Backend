@@ -83,8 +83,21 @@ const createCustomer = async (req, res) => {
         await db.customer_mappings.create({customer_id:data.id, company_id: req.body.company_id});
         const url = `${process.env.FRONTEND_BASE_URL}customer/qr?id=${data.id}`;
         const qrCodeImage = await QRCode.toDataURL(url);
-        sendEmail(req.body.email, "Registered Successfully!", "Dear, Customer thank you for registering under loyality program",
-             `<h1>Hello</h1><p>Here is an embedded base64 image:</p><img src="${qrCodeImage}" alt="Embedded Image" />`
+        sendEmail(req.body.email, "Welcome to PassMe Point!", `
+            Dear ${req.body.name},
+            Welcome to PassMe Point! We’re thrilled to have you join us and look forward to helping you create a seamless loyalty experience for your customers.
+            Here are your account details:
+            •	Username: ${req.body.email}
+            •	Password: ${req.body.password}
+            You can log in to your account anytime by visiting https://passmepoints.com/login .
+            To make your loyalty program even more efficient, here is your personalized QR code. Use this code to share with your merchant whenever they need to add or redeem points:
+            This QR code makes the process quick and hassle-free.
+            If you have any questions or need assistance, feel free to contact us at info@buypassme.com . We’re here to help every step of the way.
+            Best regards,
+
+            PassMe Point Team
+            `,
+             `<img src="${qrCodeImage}" alt="Embedded Image" />`
             )
         result.qr_code = qrCodeImage;
         return res.status(200).json(result);
