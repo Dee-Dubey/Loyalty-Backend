@@ -40,7 +40,7 @@ const createCompany = async(req, res) => {
         name: req.body.name,
         username:req.body.email,
         password: user.password,
-        qrCodeImage: `${BACKEND_BASE_URL}/api/uploads/${ts}.png`}, 
+        qrCodeImage: `${process.env.BACKEND_BASE_URL}/api/uploads/${ts}.png`}, 
         (err, html) => {
                 sendEmail(req.body.email, "Welcome to PassMe Point!",'', html);
         });
