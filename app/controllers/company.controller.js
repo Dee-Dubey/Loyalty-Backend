@@ -29,21 +29,18 @@ const createCompany = async(req, res) => {
         });
         const url = `${process.env.FRONTEND_BASE_URL}user/qr?company_id=${company.id}`;
         const qrCodeImage = await QRCode.toDataURL(url);
-        sendEmail(req.body.email, "Welcome to PassMe Point!",
-            `Dear ${req.body.name},
-            Welcome to PassMe Point! We’re thrilled to have you onboard and excited to help you enhance customer loyalty through our platform.
-            Here are the login details for your company account:
-                •	Username: ${req.body.email}
-                •	Password: ${user.password}
-                •	QR
-                You can log in to your account at any time by visiting https://passmepoints.com/login .
-            With PassMe Point, you’ll have all the tools you need to create an easy and effective loyalty program for your customers. If you have any questions or need assistance, feel free to reach out to our support team at info@buypassme.com .
-            We’re here to ensure your success and look forward to working with you.
-            Best regards,
-
-            PassMe Point Team`,
-        `<img src="${qrCodeImage}" alt="Embedded Image" />`
-        );
+        const base64Data = base64String.replace(/^data:image\/(png|jpg|jpeg|gif);base64,/, '');
+          const buffer = Buffer.from(base64Data, 'base64');
+          const ts = Date.now();
+          fs.writeFileSync(`public/${ts}.png`, buffer);
+          ejs.renderFile(path.join(__dirname, 'app','templates', 'companyRegistration.ejs'), { 
+            name: req.body.name,
+            username:req.body.email,
+            password: user.password,
+            qrCodeImage: `${BACKEND_BASE_URL}/api/uploads/${ts}.png`}, 
+            (err, html) => {
+                  sendEmail(req.body.email, "Welcome to PassMe Point!",'', html);
+            });
         const result = {returnCode:0, url, qrCodeImage, company, user}
         return res.status(200).json(result);
     }catch(e){
