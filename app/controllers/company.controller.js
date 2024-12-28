@@ -3,6 +3,8 @@ const db = require("../models");
 const { sendEmail } = require("../utilities/utilities");
 const QRCode = require('qrcode');
 require('dotenv').config('../../.env');
+const fs = require('fs');
+const path = require('path');
 
 const createCompany = async(req, res) => {
     try{
