@@ -72,7 +72,7 @@ const convertEnquiryToUser = async(req, res) =>{
             await db.enqueries.destroy({where:{id:enquiry.id}});
         }
 
-        ejs.renderFile(path.join(__dirname, 'app','templates', 'companyRegistration.ejs'), { 
+        ejs.renderFile('app/templates/companyRegistration.ejs', { 
         name: enquiry.name,
         username: enquiry.email,
         password: enquiry.name.split(" ")[0],

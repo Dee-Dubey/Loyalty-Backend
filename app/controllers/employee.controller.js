@@ -20,7 +20,7 @@ const createEmployee = async(req, res)=>{
             employee_id: employee.id,
             company_id: employee.company_id
         });
-        ejs.renderFile(path.join(__dirname, 'app','templates', 'employeeRegistration.ejs'), { 
+        ejs.renderFile('app/templates/employeeRegistration.ejs', { 
             name: req.body.name,
             username:req.body.email,
             password: req.body.name.split(" ")[0]

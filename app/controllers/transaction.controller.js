@@ -49,7 +49,7 @@ const addPoints = async (req, res) => {
         result.totalPointsInAccount = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id}});
         result.msg = 'points added successfully!';
         const customer = await db.customers.findOne({where:{id: req.body.customer_id}});
-        ejs.renderFile(path.join(__dirname, 'app','templates', 'add.ejs'), { 
+        ejs.renderFile('app/templates/add.ejs', { 
             name: customer.name,
             businessName: req.body.businessName,
             point: req.body.point,
@@ -88,7 +88,7 @@ const redeemPoints = async (req, res) => {
         result.msg = 'redeemed successfully!';
         const customer = await db.customers.findOne({where:{id: req.body.customer_id}});
         result.totalPointsInAccount = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id}});
-        ejs.renderFile(path.join(__dirname, 'app','templates', 'redeem.ejs'), { 
+        ejs.renderFile('app/templates/redeem.ejs', { 
             name: customer.name,
             businessName: req.body.businessName,
             point: -req.body.point,

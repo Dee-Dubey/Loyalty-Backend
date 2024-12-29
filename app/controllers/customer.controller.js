@@ -90,13 +90,15 @@ const createCustomer = async (req, res) => {
         const buffer = Buffer.from(base64Data, 'base64');
         const ts = Date.now();
         fs.writeFileSync(`public/${ts}.png`, buffer);
-        ejs.renderFile(path.join(__dirname, 'app','templates', 'customerRegistration.ejs'), { 
+        ejs.renderFile(`app/templates/customerRegistration.ejs`, { 
         name: req.body.name,
         username:req.body.email,
-        password: user.password,
+        password: req.body.password,
         qrCodeImage: `${process.env.BACKEND_BASE_URL}/api/uploads/${ts}.png`}, 
         (err, html) => {
+            if(html){
                 sendEmail(req.body.email, "Welcome to PassMe Point!",'', html);
+            }
         });
         result.qr_code = qrCodeImage;
         return res.status(200).json(result);
