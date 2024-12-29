@@ -1,6 +1,8 @@
 const { ERROR_RESPONSE } = require("../constants");
 const db = require("../models");
 const { sendEmail } = require("../utilities/utilities");
+const path = require('path');
+const ejs = require('ejs');
 
 const createEnquiry = async(req, res) => {
     try{
@@ -69,10 +71,15 @@ const convertEnquiryToUser = async(req, res) =>{
             })
             await db.enqueries.destroy({where:{id:enquiry.id}});
         }
-        sendEmail(req.body.email, "Registered Successfully!", 
-            `Dear ${enquiry.name},\n thank you for registering under loyality program your password is ${enquiry.name.split(" ")[0]}`,
-        `<h1></h1>`
-        );
+
+        ejs.renderFile(path.join(__dirname, 'app','templates', 'companyRegistration.ejs'), { 
+        name: enquiry.name,
+        username: enquiry.email,
+        password: enquiry.name.split(" ")[0],
+        qrCodeImage: `${process.env.BACKEND_BASE_URL}/api/uploads`}, 
+        (err, html) => {
+                sendEmail(req.body.email, "Welcome to PassMe Point!",'', html);
+        });
         return res.status(200).json(result);
     }catch(e){
         console.log(e);

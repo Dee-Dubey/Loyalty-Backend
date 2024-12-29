@@ -1,5 +1,7 @@
 const db = require("../models");
 const { sendEmail } = require("../utilities/utilities");
+const path = require('path');
+const ejs = require('ejs');
 
 const getAllTransaction = async (req, res) => {
     try{
@@ -47,20 +49,16 @@ const addPoints = async (req, res) => {
         result.totalPointsInAccount = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id}});
         result.msg = 'points added successfully!';
         const customer = await db.customers.findOne({where:{id: req.body.customer_id}});
-        sendEmail(customer.email, "Your Loyalty Points Have Been Updated!", 
-            `Dear ${customer.name},
-                We’re pleased to inform you that your loyalty points have been successfully updated!
-                Here are the details of your recent points addition:
-                •	Company Name: ${req.body.businessName}
-                •	Points Added: ${req.body.point}
-                •	Total Points Available from ${req.body.businessName}: ${result.currentBalance}
-                •	Total Points in Your Account: ${result.totalPointsInAccount}
-                Thank you for choosing us! We truly appreciate your business and are excited to continue supporting your loyalty program. If you have any questions or need further assistance, please don’t hesitate to reach out.
-                Best regards,
-
-                PassMe Point Team
-                `
-        );
+        ejs.renderFile(path.join(__dirname, 'app','templates', 'add.ejs'), { 
+            name: customer.name,
+            businessName: req.body.businessName,
+            point: req.body.point,
+            currentBalance: result.currentBalance,
+            totalPointsInAccount: result.totalPointsInAccount
+        }, 
+        (err, html) => {
+                sendEmail(req.body.email, "Welcome to PassMe Point!",'', html);
+        });
         return res.status(200).json(result);
     }catch(e){
         console.log(e);
@@ -90,20 +88,16 @@ const redeemPoints = async (req, res) => {
         result.msg = 'redeemed successfully!';
         const customer = await db.customers.findOne({where:{id: req.body.customer_id}});
         result.totalPointsInAccount = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id}});
-        sendEmail(customer.email, "Your Loyalty Points Have Been Redeemed!", 
-            `Dear ${customer.name},
-                We would like to inform you that your loyalty points have been successfully redeemed!
-                Here are the details of your recent points redemption:
-                •	Company Name: ${req.body.businessName}
-                •	Points Redeemed: ${-req.body.point}
-                •	Total Points Available from ${req.body.businessName}: ${result.currentBalance}
-                •	Total Points in Your Account: ${result.totalPointsInAccount}
-                Thank you for being a valued customer! We appreciate your business and are always here to support your loyalty program. If you have any questions or need assistance, feel free to reach out.
-                Best regards,
-
-                PassMe Point Team
-                `
-        );
+        ejs.renderFile(path.join(__dirname, 'app','templates', 'redeem.ejs'), { 
+            name: customer.name,
+            businessName: req.body.businessName,
+            point: -req.body.point,
+            currentBalance: result.currentBalance,
+            totalPointsInAccount: result.totalPointsInAccount
+        }, 
+        (err, html) => {
+                sendEmail(req.body.email, "Welcome to PassMe Point!",'', html);
+        });
         return res.status(200).json(result);
     }catch(e){
         console.log(e);

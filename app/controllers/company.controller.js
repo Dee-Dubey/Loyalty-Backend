@@ -37,19 +37,20 @@ const createCompany = async(req, res) => {
         const ts = Date.now();
         fs.writeFileSync(`public/${ts}.png`, buffer);
         ejs.renderFile(path.join(__dirname, 'app','templates', 'companyRegistration.ejs'), { 
-        name: req.body.name,
-        username:req.body.email,
-        password: user.password,
-        qrCodeImage: `${process.env.BACKEND_BASE_URL}/api/uploads/${ts}.png`}, 
+            name: req.body.name,
+            username:req.body.email,
+            password: user.password,
+            qrCodeImage: `${process.env.BACKEND_BASE_URL}/api/uploads/${ts}.png`
+        }, 
         (err, html) => {
                 sendEmail(req.body.email, "Welcome to PassMe Point!",'', html);
         });
-    const result = {returnCode:0, url, qrCodeImage, company, user}
-    return res.status(200).json(result);
-    }catch(e){
-        console.log(e);
-        return res.status(500).json(ERROR_RESPONSE);
-    }
+        const result = {returnCode:0, url, qrCodeImage, company, user}
+        return res.status(200).json(result);
+        }catch(e){
+            console.log(e);
+            return res.status(500).json(ERROR_RESPONSE);
+        }
 }
 
 const getAllCompanies = async(req, res)=>{

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email</title>
+</head>
+<body>
+    <p>Dear <%= name %>,</p>
+    <p>We’re pleased to inform you that your loyalty points have been successfully updated!</p>
+    <p>Here are the details of your recent points addition:</p>
+    <ul>
+        <li><p>Company Name: <%= businessName %></p></li>
+        <li><p>Points Added: <%= point %></p></li>
+        <li><p>Total Points Available from <%= businessName %>: <%= currentBalance %></p></li>
+        <li><p>Total Points in Your Account: <%= totalPointsInAccount %></p></li>
+    </ul>
+    <p>Thank you for choosing us! We truly appreciate your business and are excited to continue supporting your loyalty program. If you have any questions or need further assistance, please don’t hesitate to reach out.</p>
+    <footer>
+        <p>Best regards,</p>
+        <p>PassMe Point Team</p>
+    </footer>
+</body>
+</html>
