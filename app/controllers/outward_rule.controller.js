@@ -1,10 +1,16 @@
 const db = require("../models");
+const { downloadExcel } = require("../utilities/utilities");
 
 const getAllOutwardRule = async (req, res) => {
     try{
+        const {download} = req.query;
+        delete req.query.download;
         const result = {returnCode: 0 }
         const { company_id } = req.data;
         result.data = await db.outward_rules.findAll({ where: { company_id } });
+        if(download){
+            return downloadExcel(result.data, res, 'outward_rules');
+        }
         return res.status(200).json(result);
     }catch(e){
         return res.status(500).json({msg: 'Something went wrong!' });

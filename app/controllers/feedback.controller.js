@@ -1,5 +1,6 @@
 const { ERROR_RESPONSE } = require("../constants");
 const db = require("../models");
+const { downloadExcel } = require("../utilities/utilities");
 
 const createFeedback = async(req, res) => {
     try{
@@ -25,8 +26,13 @@ const deleteFeedback = async(req, res) => {
 
 const getAllfeedback = async(req, res) => {
     try{
+        const {download} = req.query;
+        delete req.query.download;
         const result = {returnCode:0, msg: 'feedback fetched!'}
         result.data = await db.feedbacks.findAll();
+        if(download){
+            return downloadExcel(result.data, res, 'feedbacks');
+        }
         return res.status(200).json(result);
     }catch(e){
         return res.status(500).json(ERROR_RESPONSE);

@@ -1,6 +1,6 @@
 const { ERROR_RESPONSE } = require("../constants");
 const db = require("../models");
-const { sendEmail } = require("../utilities/utilities");
+const { sendEmail, downloadExcel } = require("../utilities/utilities");
 const path = require('path');
 const ejs = require('ejs');
 
@@ -32,8 +32,13 @@ const deleteEnquiry = async(req, res) => {
 
 const getAllEnquiry = async(req, res) => {
     try{
+        const {download} = req.query;
+        delete req.query.download;
         const result = {returnCode:0, msg: 'enquiry fetched!'}
         result.data = await db.enqueries.findAll();
+        if(download){
+            return downloadExcel(result.data, res, 'enquiries');
+        }
         return res.status(200).json(result);
     }catch(e){
         return res.status(500).json(ERROR_RESPONSE);

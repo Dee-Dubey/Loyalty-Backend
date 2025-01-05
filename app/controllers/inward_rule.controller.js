@@ -1,10 +1,16 @@
 const db = require("../models");
+const { downloadExcel } = require("../utilities/utilities");
 
 const getAllInwardRule = async (req, res) => {
     try{
+        const {download} = req.query;
+        delete req.query.download;
         const result = {returnCode: 0 }
         const { company_id } = req.data;
         result.data = await db.inward_rules.findAll({ where: { company_id } });
+        if(download){
+            return downloadExcel(result.data, res, 'inward_rules');
+        }
         return res.status(200).json(result);
     }catch(e){
         console.log(e);

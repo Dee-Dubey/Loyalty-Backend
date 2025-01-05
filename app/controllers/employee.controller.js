@@ -1,6 +1,6 @@
 const { ERROR_RESPONSE } = require("../constants");
 const db = require("../models");
-const { sendEmail } = require("../utilities/utilities");
+const { sendEmail, downloadExcel } = require("../utilities/utilities");
 const path = require('path');
 const ejs = require('ejs');
 
@@ -37,9 +37,14 @@ const createEmployee = async(req, res)=>{
 
 const getAllEmployees = async(req, res)=>{
     try{
+        const {download} = req.query;
+        delete req.query.download;
         const {company_id, role} = req.data;
         const condition = role==='admin'?{}:{where: {company_id}}
         const employees = await db.employees.findAll(condition);
+        if(download){
+            return downloadExcel(employees, res, 'employees');
+        }
         return res.status(200).json({returnCode:0, msg:'employees fetched successfully!', employees});
     }catch(e){
         console.log(e);
@@ -71,7 +76,12 @@ const updateEmployee = async(req, res)=>{
 
 const getEmployeeByCompanyId = async(req, res)=>{
     try{
+        const {download} = req.query;
+        delete req.query.download;
         const employees = await db.employees.findAll({where:{company_id: req.body.id}});
+        if(download){
+            return downloadExcel(data[0], res, 'customers');
+        }
         return res.status(200).json({returnCode:0, msg:'employees fetched successfully!', employees});
     }catch(e){
         console.log(e);

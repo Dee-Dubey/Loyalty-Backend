@@ -1,11 +1,17 @@
 const { ERROR_RESPONSE } = require("../constants");
 const db = require("../models");
+const { downloadExcel } = require("../utilities/utilities");
 
 const getAllUsers = async (req, res) => {
     try {
+        const {download} = req.query;
+        delete req.query.download;
         const {company_id, role} = req.data;
         const condition = role==='admin'?{where:{...req.query}}:{where:{...req.query, company_id}}
         const data = await db.users.findAll(condition);
+        if(download){
+            return downloadExcel(data, res, 'users');
+        }
         return res.status(200).json({ returnCode: 0, msg:'user fetched successfully!', data });
     } catch (e) {
         console.log(e);

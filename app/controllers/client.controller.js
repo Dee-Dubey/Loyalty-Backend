@@ -1,7 +1,9 @@
 const { ERROR_RESPONSE } = require("../constants");
 const db = require("../models");
 const fs = require('fs');
+const { downloadExcel } = require("../utilities/utilities");
 require('dotenv').config('../../.env');
+
 
 const createClient = async(req, res) => {
     try{
@@ -32,8 +34,14 @@ const deleteClient = async(req, res) => {
 
 const getAllClient = async(req, res) => {
     try{
-        const result = {returnCode:0, msg: 'client fetched!'}
-        result.data = await db.clients.findAll();
+        const {download} = req.query;
+        delete req.query.download;
+        const result = {returnCode:0, msg: 'client fetched!'};
+        const clients = await db.clients.findAll();
+        result.data = clients;
+        if(download){
+            return downloadExcel(clients, res, 'clients');
+        }
         return res.status(200).json(result);
     }catch(e){
         return res.status(500).json(ERROR_RESPONSE);

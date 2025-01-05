@@ -1,10 +1,12 @@
 const db = require("../models");
-const { sendEmail } = require("../utilities/utilities");
+const { sendEmail, downloadExcel } = require("../utilities/utilities");
 const path = require('path');
 const ejs = require('ejs');
 
 const getAllTransaction = async (req, res) => {
     try{
+        const {download} = req.query;
+        delete req.query.download;
         const result = {returnCode: 0 }
         const { company_id, user_id, role, customer_id, branch } = req.data;
         if(role === 'admin'){
@@ -15,6 +17,9 @@ const getAllTransaction = async (req, res) => {
             result.data = await db.transactions_history.findAll({where: {customer_id, ...req.query} });
         }else if(role === 'user'){
             result.data = await db.transactions_history.findAll({ where: { created_by: user_id, ...req.query } });
+        }
+        if(download){
+            return downloadExcel(result.data, res, 'transactions');
         }
         return res.status(200).json(result);
     }catch(e){
@@ -49,15 +54,16 @@ const addPoints = async (req, res) => {
         result.totalPointsInAccount = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id}});
         result.msg = 'points added successfully!';
         const customer = await db.customers.findOne({where:{id: req.body.customer_id}});
+        const company = await db.companies.findOne({where:{id: company_id}});
         ejs.renderFile('app/templates/add.ejs', { 
             name: customer.name,
-            businessName: req.body.businessName,
+            businessName: company.businessName,
             point: req.body.point,
             currentBalance: result.currentBalance,
             totalPointsInAccount: result.totalPointsInAccount
         }, 
         (err, html) => {
-                sendEmail(req.body.email, "Welcome to PassMe Point!",'', html);
+                sendEmail(customer.email, "Welcome to PassMe Point!",'', html);
         });
         return res.status(200).json(result);
     }catch(e){
@@ -87,16 +93,21 @@ const redeemPoints = async (req, res) => {
         result.currentBalance = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id, company_id}});
         result.msg = 'redeemed successfully!';
         const customer = await db.customers.findOne({where:{id: req.body.customer_id}});
+        const company = await db.companies.findOne({where:{id: company_id}});
         result.totalPointsInAccount = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id}});
         ejs.renderFile('app/templates/redeem.ejs', { 
             name: customer.name,
-            businessName: req.body.businessName,
+            businessName: company.businessName,
             point: -req.body.point,
             currentBalance: result.currentBalance,
             totalPointsInAccount: result.totalPointsInAccount
         }, 
         (err, html) => {
-                sendEmail(req.body.email, "Welcome to PassMe Point!",'', html);
+                if(html){
+                    sendEmail(customer.email, "Welcome to PassMe Point!",'', html); 
+                }else{
+                    console.log(err);
+                }
         });
         return res.status(200).json(result);
     }catch(e){

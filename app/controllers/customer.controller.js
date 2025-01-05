@@ -1,6 +1,6 @@
 const moment = require("moment");
 const db = require("../models");
-const { sendEmail } = require("../utilities/utilities");
+const { sendEmail, downloadExcel } = require("../utilities/utilities");
 const QRCode = require('qrcode');
 const { v4: uuidv4 } = require('uuid');
 const { ERROR_RESPONSE } = require("../constants");
@@ -12,6 +12,8 @@ const ejs = require('ejs');
 
 const getAllCustomer = async (req, res) => {
     try{
+        const {download} = req.query;
+        delete req.query.download;
         const result = {returnCode: 0 }
         const { user_id, company_id, role } = req.data;
         const limit = req.query.limit?req.query.limit:10;
@@ -31,6 +33,9 @@ const getAllCustomer = async (req, res) => {
                             where
                                 c.id = cm.customer_id ${conditions} limit ${limit} offset ${offset}`;
         const data = await db.query(query);
+        if(download){
+            return downloadExcel(data[0], res, 'customers');
+        }
         result.data = data[0];
         return res.status(200).json(result);
     }catch(e){
@@ -85,6 +90,7 @@ const createCustomer = async (req, res) => {
         const data = await db.customers.create({...req.body});
         await db.customer_mappings.create({customer_id:data.id, company_id: req.body.company_id});
         const url = `${process.env.FRONTEND_BASE_URL}customer/qr?id=${data.id}`;
+        console.log("url==", url);
         const qrCodeImage = await QRCode.toDataURL(url);
         const base64Data = qrCodeImage.replace(/^data:image\/(png|jpg|jpeg|gif);base64,/, '');
         const buffer = Buffer.from(base64Data, 'base64');

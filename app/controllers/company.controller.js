@@ -1,10 +1,9 @@
 const { ERROR_RESPONSE } = require("../constants");
 const db = require("../models");
-const { sendEmail } = require("../utilities/utilities");
+const { sendEmail, downloadExcel } = require("../utilities/utilities");
 const QRCode = require('qrcode');
 require('dotenv').config('../../.env');
 const fs = require('fs');
-const path = require('path');
 const ejs = require('ejs');
 
 const createCompany = async(req, res) => {
@@ -57,7 +56,12 @@ const createCompany = async(req, res) => {
 
 const getAllCompanies = async(req, res)=>{
     try{
+        const {download} = req.query;
+        delete req.query.download;
         const data = await db.companies.findAll();
+        if(download){
+            return downloadExcel(data, res, 'companies');
+        }
         return res.status(200).json({returnCode:0, msg:'companies fetched successfully!', data})
     }catch(e){
         console.log(e);
@@ -67,7 +71,12 @@ const getAllCompanies = async(req, res)=>{
 
 const getAllCompanyById = async(req, res)=>{
     try{
+        const {download} = req.query;
+        delete req.query.download;
         const data = await db.companies.findOne({where:{id: req.params.id}});
+        if(download){
+            return downloadExcel(data, res, 'companies');
+        }
         return res.status(200).json({returnCode:0, msg:'company fetched successfully!', data})
     }catch(e){
         console.log(e);
