@@ -32,11 +32,10 @@ const deleteEnquiry = async(req, res) => {
 
 const getAllEnquiry = async(req, res) => {
     try{
-        const {download} = req.query;
-        delete req.query.download;
+        const filters = JSON.parse(req.query.filters?req.query.filters:'{}');
         const result = {returnCode:0, msg: 'enquiry fetched!'}
-        result.data = await db.enqueries.findAll();
-        if(download){
+        result.data = await db.enqueries.findAll(filters);
+        if(req.query.download){
             return downloadExcel(result.data, res, 'enquiries');
         }
         return res.status(200).json(result);
@@ -87,7 +86,7 @@ const convertEnquiryToUser = async(req, res) =>{
         });
         return res.status(200).json(result);
     }catch(e){
-        console.log(e);
+        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }

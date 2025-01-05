@@ -5,20 +5,22 @@ const ejs = require('ejs');
 
 const getAllTransaction = async (req, res) => {
     try{
-        const {download} = req.query;
-        delete req.query.download;
+        const filters = JSON.parse(req.query.filters?req.query.filters:'{}');
         const result = {returnCode: 0 }
         const { company_id, user_id, role, customer_id, branch } = req.data;
         if(role === 'admin'){
-            result.data = await db.transactions_history.findAll({where: {...req.query} });
+            result.data = await db.transactions_history.findAll(filters);
         }else if(role === 'superuser'){
-            result.data = await db.transactions_history.findAll({where: {company_id, ...req.query} });
+            filters.where.company_id = company_id;
+            result.data = await db.transactions_history.findAll(filters);
         }else if(role === 'customer'){
-            result.data = await db.transactions_history.findAll({where: {customer_id, ...req.query} });
+            filters.where.customer_id = customer_id;
+            result.data = await db.transactions_history.findAll(filters);
         }else if(role === 'user'){
-            result.data = await db.transactions_history.findAll({ where: { created_by: user_id, ...req.query } });
+            filters.where.user_id = user_id;
+            result.data = await db.transactions_history.findAll(filters);
         }
-        if(download){
+        if(req.query.download){
             return downloadExcel(result.data, res, 'transactions');
         }
         return res.status(200).json(result);
@@ -67,7 +69,7 @@ const addPoints = async (req, res) => {
         });
         return res.status(200).json(result);
     }catch(e){
-        console.log(e);
+        delete req.query.download;;
         return res.status(500).json({msg: 'Something went wrong!' });
     }
 }
@@ -111,7 +113,7 @@ const redeemPoints = async (req, res) => {
         });
         return res.status(200).json(result);
     }catch(e){
-        console.log(e);
+        delete req.query.download;;
         return res.status(500).json({msg: 'Something went wrong!' });
     }
 }
@@ -123,7 +125,7 @@ const getCustomerTransactionByUserId = async (req, res) => {
         result.data = await db.transactions_history.findAll({ where: { company_id } });
         return res.status(200).json(result);
     }catch(e){
-        console.log(e);
+        delete req.query.download;;
         return res.status(500).json({msg: 'Something went wrong!' });
     }
 }

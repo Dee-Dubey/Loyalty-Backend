@@ -4,17 +4,18 @@ const { downloadExcel } = require("../utilities/utilities");
 
 const getAllUsers = async (req, res) => {
     try {
-        const {download} = req.query;
-        delete req.query.download;
+        const filters = JSON.parse(req.query.filters?req.query.filters:'{}');
         const {company_id, role} = req.data;
-        const condition = role==='admin'?{where:{...req.query}}:{where:{...req.query, company_id}}
-        const data = await db.users.findAll(condition);
-        if(download){
+        if(role !== 'admin'){
+            filters.company_id = company_id;
+        }
+        const data = await db.users.findAll(filters);
+        if(req.query.download){
             return downloadExcel(data, res, 'users');
         }
         return res.status(200).json({ returnCode: 0, msg:'user fetched successfully!', data });
     } catch (e) {
-        console.log(e);
+        delete req.query.download;;
         return res.status(500).json({ msg: 'Something went wrong!' });
     }
 }
@@ -35,7 +36,7 @@ const createUser= async (req, res) => {
         result.msg = 'created successfully!';
         return res.status(200).json(result);
     } catch (e) {
-        console.log(e);
+        delete req.query.download;;
         return res.status(500).json({ msg: 'Something went wrong!' });
     }
 }
@@ -46,7 +47,7 @@ const updateUser = async (req, res) => {
         await db.users.update({...req.body}, {where:{id}});
         return res.status(200).json({ returnCode: 0, msg:'user updated successfully!' });
     } catch (e) {
-        console.log(e)
+        delete req.query.download;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -76,7 +77,7 @@ const resetPassword = async (req, res) =>{
         await db.users.update({password: req.body.password},{where: {username: req.body.username}})
         return res.status(200).json({returnCode:0, msg: 'password reset successfully!'});
     }catch(e){
-        console.log(e)
+        delete req.query.download;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }

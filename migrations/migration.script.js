@@ -11,7 +11,7 @@ const dataMigration = async(db)=>{
             });
         }
     }catch(e){
-        console.log(e);
+        delete req.query.download;;
     }
 }
 

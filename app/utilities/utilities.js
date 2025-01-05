@@ -25,7 +25,7 @@ const sendEmail = async(emailTo, subject, text, htmlContent) =>{
         const info = await transporter.sendMail(mailOptions);
         console.log("Message sent: %s", info.messageId);
     }catch(e){
-      console.log(e);
+      delete req.query.download;;
         console.log("error in sending email...");
     }
 }
@@ -41,7 +41,7 @@ const downloadExcel = async (result, res, filename) =>{
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       return res.end(excelBuffer);
   }catch(e){
-    console.log(e);
+    delete req.query.download;;
       return res.status(500).json({returnCode:1, msg: 'Something went wrong!Please try after sometime'});
   }
 }

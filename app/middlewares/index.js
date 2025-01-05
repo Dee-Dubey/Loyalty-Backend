@@ -24,7 +24,7 @@ const isAdmin = (req, res , next) => {
             return res.status(403).json({ msg: 'Permission Denied!', result:{}});
         }
     }catch(e){
-        console.log(e);
+        delete req.query.download;;
         return res.status(500).json({ msg: 'Something went wrong!', result:{}})
     }
 }
@@ -38,7 +38,7 @@ const isSuperUser = (req, res , next) => {
             return res.status(403).json({ msg: 'Permission Denied!', result:{}});
         }
     }catch(e){
-        console.log(e);
+        delete req.query.download;;
         return res.status(500).json({ msg: 'Something went wrong!', result:{}})
     }
 }
@@ -58,7 +58,7 @@ const validateOtp = async (req, res, next)=>{
         delete req.body.otp;
         next();
     }catch(e){
-        console.log(e)
+        delete req.query.download;
         return res.status(500).json({ msg: 'Something went wrong!'})
     }
 }

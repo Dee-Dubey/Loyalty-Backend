@@ -11,7 +11,7 @@ const createClient = async(req, res) => {
         await db.clients.create({name: req.body.name, logo: `${process.env.BACKEND_BASE_URL}uploads/${req.file.filename}`, description: req.body.description});
         return res.status(200).json(result);
     }catch(e){
-        console.log(e);
+        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -27,23 +27,24 @@ const deleteClient = async(req, res) => {
         await db.clients.destroy({where:{id}});
         return res.status(200).json(result);
     }catch(e){
-        console.log(e);
+        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
 
 const getAllClient = async(req, res) => {
     try{
-        const {download} = req.query;
-        delete req.query.download;
+        console.log(req.query.filters)
+        const filters = JSON.parse(req.query.filters?req.query.filters:'{}');
         const result = {returnCode:0, msg: 'client fetched!'};
-        const clients = await db.clients.findAll();
+        const clients = await db.clients.findAll(filters);
         result.data = clients;
-        if(download){
+        if(req.query.download){
             return downloadExcel(clients, res, 'clients');
         }
         return res.status(200).json(result);
     }catch(e){
+        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }

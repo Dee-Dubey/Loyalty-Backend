@@ -26,15 +26,16 @@ const deleteFeedback = async(req, res) => {
 
 const getAllfeedback = async(req, res) => {
     try{
-        const {download} = req.query;
-        delete req.query.download;
+        console.log(req.query.filters)
+        const filters = JSON.parse(req.query.filters?req.query.filters:'{}');
         const result = {returnCode:0, msg: 'feedback fetched!'}
-        result.data = await db.feedbacks.findAll();
-        if(download){
+        result.data = await db.feedbacks.findAll(filters);
+        if(req.query.download){
             return downloadExcel(result.data, res, 'feedbacks');
         }
         return res.status(200).json(result);
     }catch(e){
+        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }

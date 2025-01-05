@@ -3,17 +3,17 @@ const { downloadExcel } = require("../utilities/utilities");
 
 const getAllInwardRule = async (req, res) => {
     try{
-        const {download} = req.query;
-        delete req.query.download;
+        const filters = JSON.parse(req.query.filters?req.query.filters:'{}');
+        filters.where.company_id = company_id;
         const result = {returnCode: 0 }
         const { company_id } = req.data;
-        result.data = await db.inward_rules.findAll({ where: { company_id } });
-        if(download){
+        result.data = await db.inward_rules.findAll(filters);
+        if(req.query.download){
             return downloadExcel(result.data, res, 'inward_rules');
         }
         return res.status(200).json(result);
     }catch(e){
-        console.log(e);
+        delete req.query.download;;
         return res.status(500).json({msg: 'Something went wrong!' });
     }
 }
@@ -25,7 +25,7 @@ const getInwardRuleById = async (req, res) => {
         result.data = await db.inward_rules.findOne({ where: { id } });
         return res.status(200).json(result);
     }catch(e){
-        console.log(e);
+        delete req.query.download;;
         return res.status(500).json({msg: 'Something went wrong!' });
     }
 }
@@ -44,7 +44,7 @@ const createInwardRule = async (req, res) => {
         result.msg = 'created!'
         return res.status(200).json(result);
     }catch(e){
-        console.log(e);
+        delete req.query.download;;
         return res.status(500).json({msg: 'Something went wrong!' });
     }
 }
@@ -58,7 +58,7 @@ const updateInwardRule = async (req, res) => {
         result.msg = 'updated!'
         return res.status(200).json(result);
     }catch(e){
-        console.log(e);
+        delete req.query.download;;
         return res.status(500).json({msg: 'Something went wrong!' });
     }
 }
@@ -72,7 +72,7 @@ const deleteInwardRule = async (req, res) => {
         result.msg = 'deleted!';
         return res.status(200).json(result);
     }catch(e){
-        console.log(e);
+        delete req.query.download;;
         return res.status(500).json({msg: 'Something went wrong!' });
     }
 }

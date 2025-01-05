@@ -49,37 +49,34 @@ const createCompany = async(req, res) => {
         const result = {returnCode:0, url, qrCodeImage, company, user}
         return res.status(200).json(result);
         }catch(e){
-            console.log(e);
+            delete req.query.download;;
             return res.status(500).json(ERROR_RESPONSE);
         }
 }
 
 const getAllCompanies = async(req, res)=>{
     try{
-        const {download} = req.query;
-        delete req.query.download;
-        const data = await db.companies.findAll();
-        if(download){
+        const filters = JSON.parse(req.query.filters?req.query.filters:'{}');
+        const data = await db.companies.findAll(filters);
+        if(req.query.download){
             return downloadExcel(data, res, 'companies');
         }
         return res.status(200).json({returnCode:0, msg:'companies fetched successfully!', data})
     }catch(e){
-        console.log(e);
+        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
 
 const getAllCompanyById = async(req, res)=>{
     try{
-        const {download} = req.query;
-        delete req.query.download;
         const data = await db.companies.findOne({where:{id: req.params.id}});
-        if(download){
+        if(req.query.download){
             return downloadExcel(data, res, 'companies');
         }
         return res.status(200).json({returnCode:0, msg:'company fetched successfully!', data})
     }catch(e){
-        console.log(e);
+        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -89,7 +86,7 @@ const deleteCompany = async(req, res)=>{
         const data = await db.companies.destroy({where:{id: req.params.id}});
         return res.status(200).json({returnCode:0, msg:'company deleted successfully!', data})
     }catch(e){
-        console.log(e);
+        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -99,7 +96,7 @@ const updateCompany = async(req, res)=>{
         const data = await db.companies.update({...req.body}, {where:{id: req.params.id}});
         return res.status(200).json({returnCode:0, msg:'company updated successfully!', data})
     }catch(e){
-        console.log(e);
+        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -120,7 +117,7 @@ const getCompanyWisePoints = async (req,res) => {
                             name`);
         return res.status(200).json({returnCode:0, msg:'', data: result[0]})
     }catch(e){
-        console.log(e)
+        delete req.query.download;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -131,7 +128,7 @@ const getQRCode = async (req,res) => {
         const qrCodeImage = await QRCode.toDataURL(url);
         return res.status(200).json({returnCode:0, msg:'QR generated successfully!', qrCodeImage, url})
     }catch(e){
-        console.log(e)
+        delete req.query.download;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -145,7 +142,7 @@ const blockCompany = async(req, res)=>{
         ])
         return res.status(200).json({returnCode:0, msg:`company ${status?'unblocked':'blocked'} successfully!`})
     }catch(e){
-        console.log(e);
+        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
