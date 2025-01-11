@@ -35,6 +35,9 @@ const getAllEnquiry = async(req, res) => {
         const filters = JSON.parse(req.query.filters?req.query.filters:'{}');
         const result = {returnCode:0, msg: 'enquiry fetched!'}
         result.data = await db.enqueries.findAll(filters);
+        filters.limit = null;
+        filters.offset = null;
+        result.count = await db.enqueries.count(filters);
         if(req.query.download){
             return downloadExcel(result.data, res, 'enquiries');
         }

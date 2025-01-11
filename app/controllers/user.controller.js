@@ -10,6 +10,9 @@ const getAllUsers = async (req, res) => {
             filters.company_id = company_id;
         }
         const data = await db.users.findAll(filters);
+        filters.limit = null;
+        filters.offset = null;
+        result.count = await db.users.count(filters);
         if(req.query.download){
             return downloadExcel(data, res, 'users');
         }

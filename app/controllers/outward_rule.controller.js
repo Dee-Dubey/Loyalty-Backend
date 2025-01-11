@@ -8,6 +8,9 @@ const getAllOutwardRule = async (req, res) => {
         const { company_id } = req.data;
         filters.where.company_id = company_id;
         result.data = await db.outward_rules.findAll(filters);
+        filters.limit = null;
+        filters.offset = null;
+        result.count = await db.outward_rules.count(filters);
         if(req.query.download){
             return downloadExcel(result.data, res, 'outward_rules');
         }

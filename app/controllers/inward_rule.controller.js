@@ -8,6 +8,9 @@ const getAllInwardRule = async (req, res) => {
         const result = {returnCode: 0 }
         const { company_id } = req.data;
         result.data = await db.inward_rules.findAll(filters);
+        filters.limit = null;
+        filters.offset = null;
+        result.count = await db.inward_rules.count(filters);
         if(req.query.download){
             return downloadExcel(result.data, res, 'inward_rules');
         }

@@ -34,11 +34,13 @@ const deleteClient = async(req, res) => {
 
 const getAllClient = async(req, res) => {
     try{
-        console.log(req.query.filters)
         const filters = JSON.parse(req.query.filters?req.query.filters:'{}');
         const result = {returnCode:0, msg: 'client fetched!'};
         const clients = await db.clients.findAll(filters);
         result.data = clients;
+        filters.limit = null;
+        filters.offset = null;
+        result.count = await db.clients.count(filters);
         if(req.query.download){
             return downloadExcel(clients, res, 'clients');
         }

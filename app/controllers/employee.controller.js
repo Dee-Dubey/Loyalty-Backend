@@ -41,10 +41,13 @@ const getAllEmployees = async(req, res)=>{
         const {company_id, role} = req.data;
         filters.where.company_id = company_id;
         const employees = await db.employees.findAll(filters);
+        filters.limit = null;
+        filters.offset = null;
+        const count = await db.employees.count(filters);
         if(req.query.download){
             return downloadExcel(employees, res, 'employees');
         }
-        return res.status(200).json({returnCode:0, msg:'employees fetched successfully!', employees});
+        return res.status(200).json({returnCode:0, msg:'employees fetched successfully!', employees, count});
     }catch(e){
         delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);

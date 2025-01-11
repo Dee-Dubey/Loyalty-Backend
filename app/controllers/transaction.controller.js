@@ -20,6 +20,9 @@ const getAllTransaction = async (req, res) => {
             filters.where.user_id = user_id;
             result.data = await db.transactions_history.findAll(filters);
         }
+        filters.limit = null;
+        filters.offset = null;
+        result.count = await db.transactions_history.count(filters);
         if(req.query.download){
             return downloadExcel(result.data, res, 'transactions');
         }

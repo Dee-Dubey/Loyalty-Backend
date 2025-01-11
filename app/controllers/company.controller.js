@@ -58,10 +58,13 @@ const getAllCompanies = async(req, res)=>{
     try{
         const filters = JSON.parse(req.query.filters?req.query.filters:'{}');
         const data = await db.companies.findAll(filters);
+        filters.limit = null;
+        filters.offset = null;
+        const count = await db.companies.count(filters);
         if(req.query.download){
             return downloadExcel(data, res, 'companies');
         }
-        return res.status(200).json({returnCode:0, msg:'companies fetched successfully!', data})
+        return res.status(200).json({returnCode:0, msg:'companies fetched successfully!', data, count});
     }catch(e){
         delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);

@@ -25,7 +25,8 @@ const models = ((sequelize, DataTypes) => {
 //for sqlite connection
 const db = new Sequelize({
     dialect: 'sqlite',
-    storage: './database.sqlite'  // Path to your SQLite file
+    storage: './database.sqlite',
+    logging: false
 });
 
 models(db, DataTypes);
