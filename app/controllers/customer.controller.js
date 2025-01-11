@@ -30,7 +30,7 @@ const getAllCustomer = async (req, res) => {
                                 customers c ,
                                 customer_mappings cm
                             where
-                                c.id = cm.customer_id ${conditions} limit ${limit} offset ${offset}`;
+                                c.id = cm.customer_id ${conditions} and name ILIKE '%${filters.where.name}%'  limit ${limit} offset ${offset}`;
         const data = await db.query(query);
         const query1 = `select
                                 count(distinct c.id) count
