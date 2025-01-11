@@ -18,6 +18,7 @@ const getAllCustomer = async (req, res) => {
         const limit = filters.limit?filters.limit:5;
         const offset = filters.offset?filters.offset:0;
         let conditions = role=== 'admin'? '':role==='superuser'?`and cm.company_id =${company_id}`:role==='user'?`and cm.user_id =${user_id}`:'';
+        conditions += filters.name?` and c."name" like '%${filters.name}%'`:'';
         const query = `select
                                 distinct c.id,
                                 c."name" ,
@@ -30,7 +31,7 @@ const getAllCustomer = async (req, res) => {
                                 customers c ,
                                 customer_mappings cm
                             where
-                                c.id = cm.customer_id ${conditions} and name like '%${filters.where.name}%'  limit ${limit} offset ${offset}`;
+                                c.id = cm.customer_id ${conditions} limit ${limit} offset ${offset}`;
         const data = await db.query(query);
         const query1 = `select
                                 count(distinct c.id) count
