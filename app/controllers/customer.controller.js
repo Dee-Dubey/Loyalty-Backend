@@ -33,18 +33,18 @@ const getAllCustomer = async (req, res) => {
                                 c.id = cm.customer_id ${conditions} limit ${limit} offset ${offset}`;
         const data = await db.query(query);
         const query1 = `select
-                                count(1) count
+                                count(distinct c.id) count
                             from
                                 customers c ,
                                 customer_mappings cm
                             where
                                 c.id = cm.customer_id ${conditions}`;
-        const data1 = await db.query(query);
+        const data1 = await db.query(query1);
         if(req.query.download){
             return downloadExcel(data[0], res, 'customers');
         }
         result.data = data[0];
-        result.count = data1[0].count;
+        result.count = data1[0][0].count;
         return res.status(200).json(result);
     }catch(e){
         delete req.query.download;;
