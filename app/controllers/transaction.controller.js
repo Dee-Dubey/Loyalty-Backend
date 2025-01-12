@@ -5,7 +5,7 @@ const ejs = require('ejs');
 
 const getAllTransaction = async (req, res) => {
     try{
-        const filters = JSON.parse(req.query.filters?req.query.filters:'{}');
+        const filters = JSON.parse(req.query.filters?req.query.filters:'{"where":{}}');
         const result = {returnCode: 0 }
         const { company_id, user_id, role, customer_id, branch } = req.data;
         if(role === 'admin'){
@@ -28,6 +28,7 @@ const getAllTransaction = async (req, res) => {
         }
         return res.status(200).json(result);
     }catch(e){
+        console.log(e);
         return res.status(500).json({msg: 'Something went wrong!' });
     }
 }
