@@ -3,10 +3,14 @@ const { downloadExcel } = require("../utilities/utilities");
 
 const getAllInwardRule = async (req, res) => {
     try{
-        const filters = JSON.parse(req.query.filters?req.query.filters:'{}');
-        filters.where.company_id = company_id;
-        const result = {returnCode: 0 }
         const { company_id } = req.data;
+        const filters = JSON.parse(req.query.filters?req.query.filters:'{}');
+        if(!filters.hasOwnProperty('where')){
+            filters.where = {company_id};
+        }else{
+            filters.where.company_id = company_id;
+        }
+        const result = {returnCode: 0 }
         result.data = await db.inward_rules.findAll(filters);
         filters.limit = null;
         filters.offset = null;
@@ -16,7 +20,7 @@ const getAllInwardRule = async (req, res) => {
         }
         return res.status(200).json(result);
     }catch(e){
-        delete req.query.download;;
+        console.log(e);
         return res.status(500).json({msg: 'Something went wrong!' });
     }
 }

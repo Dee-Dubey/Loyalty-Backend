@@ -3,10 +3,14 @@ const { downloadExcel } = require("../utilities/utilities");
 
 const getAllOutwardRule = async (req, res) => {
     try{
+        const { company_id } = req.data;
         const filters = JSON.parse(req.query.filters?req.query.filters:'{}');
         const result = {returnCode: 0 }
-        const { company_id } = req.data;
-        filters.where.company_id = company_id;
+        if(!filters.hasOwnProperty('where')){
+            filters.where = {company_id};
+        }else{
+            filters.where.company_id = company_id;
+        }
         result.data = await db.outward_rules.findAll(filters);
         filters.limit = null;
         filters.offset = null;

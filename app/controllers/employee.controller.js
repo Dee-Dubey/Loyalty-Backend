@@ -78,8 +78,7 @@ const updateEmployee = async(req, res)=>{
 
 const getEmployeeByCompanyId = async(req, res)=>{
     try{
-        const filters = JSON.parse(req.query.filters?req.query.filters:'{}');
-        const employees = await db.employees.findAll(filters);
+        const employees = await db.employees.findAll({where: {company_id: req.body.id}});
         if(req.query.download){
             return downloadExcel(data[0], res, 'customers');
         }
