@@ -83,7 +83,7 @@ const convertEnquiryToUser = async(req, res) =>{
         name: enquiry.name,
         username: enquiry.email,
         password: enquiry.name.split(" ")[0],
-        qrCodeImage: `${process.env.BACKEND_BASE_URL}/api/uploads`}, 
+        qrCodeImage: `${process.env.BACKEND_BASE_URL}/uploads`}, 
         (err, html) => {
                 sendEmail(req.body.email, "Welcome to PassMe Point!",'', html);
         });

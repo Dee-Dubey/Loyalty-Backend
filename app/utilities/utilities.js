@@ -1,6 +1,9 @@
 require('dotenv').config();
 const nodemailer = require("nodemailer");
 const XLSX = require('xlsx');
+const fs = require('fs');
+const PDFDocument = require('pdfkit');
+const QRCode = require('qrcode');
 
 const transporter = nodemailer.createTransport({
   service: 'Hostinger',
@@ -13,19 +16,39 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const sendEmail = async(emailTo, subject, text, htmlContent) =>{
+const sendEmail = async(emailTo, subject, text, htmlContent, pdf) =>{
     try{
+        const ts = Date.now();
+        if(pdf){
+          const imageBuffer = Buffer.from(pdf, 'base64');
+          const doc = new PDFDocument();
+          doc.pipe(fs.createWriteStream(`pdf/${ts}.pdf`));
+          doc.image(imageBuffer, {
+            fit: [250, 300],
+            align: 'center',
+            valign: 'center',
+          });
+          doc.end();
+        }
         const mailOptions = {
             from: '"Passme Points" <info@buypassme.com>', // sender address
-            to: emailTo, // list of receivers
-            subject: subject, // Subject line
-            text: text, // plain text body
-            html: htmlContent, // html body
+            to: emailTo,
+            subject: subject,
+            text: text,
+            html: htmlContent
+        }
+        if(pdf){
+          mailOptions.attachments =  [
+            {
+              filename: 'Qr.pdf',
+              path: `./pdf/${ts}.pdf`
+            }
+          ]
         }
         const info = await transporter.sendMail(mailOptions);
         console.log("Message sent: %s", info.messageId);
     }catch(e){
-      delete req.query.download;;
+      console.log(e);
         console.log("error in sending email...");
     }
 }
@@ -45,5 +68,6 @@ const downloadExcel = async (result, res, filename) =>{
       return res.status(500).json({returnCode:1, msg: 'Something went wrong!Please try after sometime'});
   }
 }
+
 
 module.exports = {sendEmail, downloadExcel}

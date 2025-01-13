@@ -17,7 +17,8 @@ const getAllTransaction = async (req, res) => {
             filters.where.customer_id = customer_id;
             result.data = await db.transactions_history.findAll(filters);
         }else if(role === 'user'){
-            filters.where.user_id = user_id;
+            const user = await db.users.findOne({where:{id: user_id}});
+            filters.where.username = user.username;
             result.data = await db.transactions_history.findAll(filters);
         }
         filters.limit = null;
