@@ -74,7 +74,7 @@ const addPoints = async (req, res) => {
         });
         return res.status(200).json(result);
     }catch(e){
-        delete req.query.download;;
+        ;
         return res.status(500).json({msg: 'Something went wrong!' });
     }
 }
@@ -118,7 +118,7 @@ const redeemPoints = async (req, res) => {
         });
         return res.status(200).json(result);
     }catch(e){
-        delete req.query.download;;
+        ;
         return res.status(500).json({msg: 'Something went wrong!' });
     }
 }
@@ -130,7 +130,7 @@ const getCustomerTransactionByUserId = async (req, res) => {
         result.data = await db.transactions_history.findAll({ where: { company_id } });
         return res.status(200).json(result);
     }catch(e){
-        delete req.query.download;;
+        ;
         return res.status(500).json({msg: 'Something went wrong!' });
     }
 }

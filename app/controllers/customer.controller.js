@@ -75,7 +75,7 @@ const getCustomerById = async (req, res) => {
         result.data = promiseResult;
         return res.status(200).json(result);
     }catch(e){
-        delete req.query.download;
+        
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -118,7 +118,7 @@ const createCustomer = async (req, res) => {
         result.qr_code = qrCodeImage;
         return res.status(200).json(result);
     }catch(e){
-        delete req.query.download;
+        
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -138,21 +138,17 @@ const generateOtp = async(req, res) =>{
 }
 
 const getCustomerByEmailId = async (req, res) => {
-    const result = {returnCode: 0, msg: 'customer fetched successfully!' }
+    const result = {returnCode: 1, msg: 'email already exists!' }
     try{
         const data = await db.customers.findOne({ where: { email: req.body.email } });
-        result.data = {
-            id: data.id,
-            name: data.name,
-            contact: data.contact,
-            email: data.email,
-            address: data.address,
-            status: data.status,
-            createdAt: data.createdAt
+        if(!data){
+            result.returnCode = 0;
+            result.msg = 'new email id!';
+            return res.status(200).json(result);
         }
         return res.status(200).json(result);
     }catch(e){
-        delete req.query.download;
+        
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -170,7 +166,6 @@ const customerLogin = async (req, res) => {
             return res.status(200).json({returnCode: 1, msg: 'invalid credentials!' });
         }
     }catch(e){
-        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -180,7 +175,7 @@ const resetPassword = async (req, res) =>{
         await db.customers.update({password: req.body.password},{where: {email: req.body.email}})
         return res.status(200).json({returnCode:0, msg: 'password reset successfully!'});
     }catch(e){
-        delete req.query.download;
+        
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -192,7 +187,7 @@ const changePassword = async (req, res) => {
         await db.customers.update({password: req.body.password}, {where: {id: customer_id}});
         return res.status(200).json(result);
     }catch(e){
-        delete req.query.download;
+        
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -209,7 +204,7 @@ const customerProfile = async (req, res) => {
         result.points = resolvedPromises[1];
         return res.status(200).json(result);
     }catch(e){
-        delete req.query.download;
+        
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -230,7 +225,7 @@ const getMerchantWisePoints = async (req,res) => {
                             c."businessName"`);
         return res.status(200).json({returnCode:0, msg:'', data: result[0]})
     }catch(e){
-        delete req.query.download;
+        
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -242,7 +237,7 @@ const getQRCode = async (req,res) => {
         const qrCodeImage = await QRCode.toDataURL(url);
         return res.status(200).json({returnCode:0, msg:'QR generated successfully!', qrCodeImage, url})
     }catch(e){
-        delete req.query.download;
+        
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -253,7 +248,7 @@ const updateCustomer = async (req,res) =>{
         await db.customers.update({...req.body}, {where:{id}});
         return res.status(200).json({returnCode:0, msg:'customer updated successfully!'});
     }catch(e){
-        delete req.query.download;
+        
         return res.status(500).json(ERROR_RESPONSE);
     }
 }

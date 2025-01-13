@@ -5,6 +5,7 @@ const QRCode = require('qrcode');
 require('dotenv').config('../../.env');
 const fs = require('fs');
 const ejs = require('ejs');
+const { Op } = require("sequelize");
 
 const createCompany = async(req, res) => {
     try{
@@ -43,13 +44,13 @@ const createCompany = async(req, res) => {
         }, 
         (err, html) => {
             if(!err){
-                sendEmail(req.body.email, "Welcome to PassMe Point!",'', html);
+                sendEmail(req.body.email, "Welcome to PassMe Point!",'', html, base64Data);
             }
         });
         const result = {returnCode:0, url, qrCodeImage, company, user}
         return res.status(200).json(result);
         }catch(e){
-            delete req.query.download;;
+            ;
             return res.status(500).json(ERROR_RESPONSE);
         }
 }
@@ -57,7 +58,17 @@ const createCompany = async(req, res) => {
 const getAllCompanies = async(req, res)=>{
     try{
         const filters = JSON.parse(req.query.filters?req.query.filters:'{}');
+        if(filters.where.createdAt){
+            const startOfDay = new Date(`${filters.where.createdAt}T00:00:00Z`); // Start of the day
+            const endOfDay = new Date(`${filters.where.createdAt}T23:59:59Z`); // End of the day
+
+            filters.where = {...filters.where, createdAt: {
+                [Op.gte]: startOfDay,
+                [Op.lte]: endOfDay
+              }}
+        }
         const data = await db.companies.findAll(filters);
+        console.log(data);
         filters.limit = null;
         filters.offset = null;
         const count = await db.companies.count(filters);
@@ -66,7 +77,7 @@ const getAllCompanies = async(req, res)=>{
         }
         return res.status(200).json({returnCode:0, msg:'companies fetched successfully!', data, count});
     }catch(e){
-        delete req.query.download;;
+        console.log(e);
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -79,7 +90,6 @@ const getAllCompanyById = async(req, res)=>{
         }
         return res.status(200).json({returnCode:0, msg:'company fetched successfully!', data})
     }catch(e){
-        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -89,7 +99,6 @@ const deleteCompany = async(req, res)=>{
         const data = await db.companies.destroy({where:{id: req.params.id}});
         return res.status(200).json({returnCode:0, msg:'company deleted successfully!', data})
     }catch(e){
-        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -99,7 +108,6 @@ const updateCompany = async(req, res)=>{
         const data = await db.companies.update({...req.body}, {where:{id: req.params.id}});
         return res.status(200).json({returnCode:0, msg:'company updated successfully!', data})
     }catch(e){
-        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -120,7 +128,7 @@ const getCompanyWisePoints = async (req,res) => {
                             name`);
         return res.status(200).json({returnCode:0, msg:'', data: result[0]})
     }catch(e){
-        delete req.query.download;
+        
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -131,7 +139,7 @@ const getQRCode = async (req,res) => {
         const qrCodeImage = await QRCode.toDataURL(url);
         return res.status(200).json({returnCode:0, msg:'QR generated successfully!', qrCodeImage, url})
     }catch(e){
-        delete req.query.download;
+        
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -145,7 +153,6 @@ const blockCompany = async(req, res)=>{
         ])
         return res.status(200).json({returnCode:0, msg:`company ${status?'unblocked':'blocked'} successfully!`})
     }catch(e){
-        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }

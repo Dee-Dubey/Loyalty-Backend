@@ -89,7 +89,6 @@ const convertEnquiryToUser = async(req, res) =>{
         });
         return res.status(200).json(result);
     }catch(e){
-        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }

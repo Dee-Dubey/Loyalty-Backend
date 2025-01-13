@@ -30,7 +30,6 @@ const createEmployee = async(req, res)=>{
         });
         return res.status(200).json({returnCode:0, msg:'employee created successfully!', employee, user});
     }catch(e){
-        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -49,7 +48,6 @@ const getAllEmployees = async(req, res)=>{
         }
         return res.status(200).json({returnCode:0, msg:'employees fetched successfully!', employees, count});
     }catch(e){
-        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -60,7 +58,6 @@ const getEmployeeById = async(req, res)=>{
         const employee = await db.employees.findOne({where: {company_id, id: req.params.id}});
         return res.status(200).json({returnCode:0, msg:'employee fetched successfully!', employee});
     }catch(e){
-        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -71,7 +68,6 @@ const updateEmployee = async(req, res)=>{
         await db.employees.update({...req.body},{where: {company_id, id: req.params.id}});
         return res.status(200).json({returnCode:0, msg:'employee updated successfully!'});
     }catch(e){
-        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -84,7 +80,6 @@ const getEmployeeByCompanyId = async(req, res)=>{
         }
         return res.status(200).json({returnCode:0, msg:'employees fetched successfully!', employees});
     }catch(e){
-        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }

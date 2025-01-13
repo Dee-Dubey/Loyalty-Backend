@@ -32,7 +32,7 @@ const getInwardRuleById = async (req, res) => {
         result.data = await db.inward_rules.findOne({ where: { id } });
         return res.status(200).json(result);
     }catch(e){
-        delete req.query.download;;
+        ;
         return res.status(500).json({msg: 'Something went wrong!' });
     }
 }
@@ -51,7 +51,7 @@ const createInwardRule = async (req, res) => {
         result.msg = 'created!'
         return res.status(200).json(result);
     }catch(e){
-        delete req.query.download;;
+        ;
         return res.status(500).json({msg: 'Something went wrong!' });
     }
 }
@@ -65,7 +65,7 @@ const updateInwardRule = async (req, res) => {
         result.msg = 'updated!'
         return res.status(200).json(result);
     }catch(e){
-        delete req.query.download;;
+        ;
         return res.status(500).json({msg: 'Something went wrong!' });
     }
 }
@@ -79,7 +79,7 @@ const deleteInwardRule = async (req, res) => {
         result.msg = 'deleted!';
         return res.status(200).json(result);
     }catch(e){
-        delete req.query.download;;
+        ;
         return res.status(500).json({msg: 'Something went wrong!' });
     }
 }

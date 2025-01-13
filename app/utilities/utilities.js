@@ -24,7 +24,7 @@ const sendEmail = async(emailTo, subject, text, htmlContent, pdf) =>{
           const doc = new PDFDocument();
           doc.pipe(fs.createWriteStream(`pdf/${ts}.pdf`));
           doc.image(imageBuffer, {
-            fit: [250, 300],
+            fit: [600, 300],
             align: 'center',
             valign: 'center',
           });
@@ -64,7 +64,7 @@ const downloadExcel = async (result, res, filename) =>{
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       return res.end(excelBuffer);
   }catch(e){
-    delete req.query.download;;
+    ;
       return res.status(500).json({returnCode:1, msg: 'Something went wrong!Please try after sometime'});
   }
 }

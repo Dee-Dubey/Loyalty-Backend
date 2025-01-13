@@ -18,7 +18,7 @@ const getAllUsers = async (req, res) => {
         }
         return res.status(200).json({ returnCode: 0, msg:'user fetched successfully!', data });
     } catch (e) {
-        delete req.query.download;;
+        ;
         return res.status(500).json({ msg: 'Something went wrong!' });
     }
 }
@@ -39,7 +39,7 @@ const createUser= async (req, res) => {
         result.msg = 'created successfully!';
         return res.status(200).json(result);
     } catch (e) {
-        delete req.query.download;;
+        ;
         return res.status(500).json({ msg: 'Something went wrong!' });
     }
 }
@@ -50,7 +50,7 @@ const updateUser = async (req, res) => {
         await db.users.update({...req.body}, {where:{id}});
         return res.status(200).json({ returnCode: 0, msg:'user updated successfully!' });
     } catch (e) {
-        delete req.query.download;
+        
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -80,7 +80,7 @@ const resetPassword = async (req, res) =>{
         await db.users.update({password: req.body.password},{where: {username: req.body.username}})
         return res.status(200).json({returnCode:0, msg: 'password reset successfully!'});
     }catch(e){
-        delete req.query.download;
+        
         return res.status(500).json(ERROR_RESPONSE);
     }
 }

@@ -11,7 +11,6 @@ const createClient = async(req, res) => {
         await db.clients.create({name: req.body.name, logo: `${process.env.BACKEND_BASE_URL}uploads/${req.file.filename}`, description: req.body.description});
         return res.status(200).json(result);
     }catch(e){
-        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -27,7 +26,6 @@ const deleteClient = async(req, res) => {
         await db.clients.destroy({where:{id}});
         return res.status(200).json(result);
     }catch(e){
-        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
@@ -46,7 +44,6 @@ const getAllClient = async(req, res) => {
         }
         return res.status(200).json(result);
     }catch(e){
-        delete req.query.download;;
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
