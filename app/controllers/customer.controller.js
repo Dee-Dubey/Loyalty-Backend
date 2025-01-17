@@ -13,12 +13,14 @@ const ejs = require('ejs');
 const getAllCustomer = async (req, res) => {
     try{
         const filters = JSON.parse(req.query.filters?req.query.filters:'{}');
+        console.log("filters==", filters);
         const result = {returnCode: 0 }
         const { user_id, company_id, role } = req.data;
         const limit = filters.limit?filters.limit:5;
         const offset = filters.offset?filters.offset:0;
         let conditions = role=== 'admin'? '':role==='superuser'?`and cm.company_id =${company_id}`:role==='user'?`and cm.user_id =${user_id}`:'';
         conditions += filters.name?` and c."name" like '%${filters.name}%'`:'';
+        console.log("conditions==", conditions);
         const query = `select
                                 distinct c.id,
                                 c."name" ,
@@ -32,6 +34,7 @@ const getAllCustomer = async (req, res) => {
                                 customer_mappings cm
                             where
                                 c.id = cm.customer_id ${conditions} limit ${limit} offset ${offset}`;
+                                console.log("query==", query);
         const data = await db.query(query);
         const query1 = `select
                                 count(distinct c.id) count
@@ -40,7 +43,9 @@ const getAllCustomer = async (req, res) => {
                                 customer_mappings cm
                             where
                                 c.id = cm.customer_id ${conditions}`;
+                                console.log("query1==", query1);
         const data1 = await db.query(query1);
+        console.log("data==", data[0]);
         if(req.query.download){
             return downloadExcel(data[0], res, 'customers');
         }
@@ -130,6 +135,14 @@ const generateOtp = async(req, res) =>{
       const randomUUID = uuidv4();
       const otp = randomUUID.replace(/\D/g, '').substring(0, 4);
       await db.otp_masters.create({otp, email: req.body.email });
+      ejs.renderFile('app/templates/otp.ejs', {
+        name: req.body.name,
+        otp: otp
+      },(err, html) => {
+        if(html){
+            sendEmail(req.body.email, "Your One-Time Password (OTP) for Secure Access",'', html);
+        }
+      });
       sendEmail(req.body.email, `Your one time password id ${otp}`, ``);
       return res.status(200).json(result);
     }catch(e){

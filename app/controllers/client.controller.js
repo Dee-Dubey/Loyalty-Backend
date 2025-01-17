@@ -26,6 +26,7 @@ const deleteClient = async(req, res) => {
         await db.clients.destroy({where:{id}});
         return res.status(200).json(result);
     }catch(e){
+        console.log(e);
         return res.status(500).json(ERROR_RESPONSE);
     }
 }

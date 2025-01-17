@@ -20,16 +20,22 @@ const createEmployee = async(req, res)=>{
             employee_id: employee.id,
             company_id: employee.company_id
         });
+        const company = await db.companies.findOne({where:{id: employee.company_id}});
         ejs.renderFile('app/templates/employeeRegistration.ejs', { 
             name: req.body.name,
             username:req.body.email,
-            password: req.body.name.split(" ")[0]
+            password: req.body.name.split(" ")[0],
+            companyName : company.name
         }, 
         (err, html) => {
+            console.log(err);
+            if(html){
                 sendEmail(req.body.email, "Welcome to PassMe Point!",'', html);
+            }
         });
         return res.status(200).json({returnCode:0, msg:'employee created successfully!', employee, user});
     }catch(e){
+        console.log(e);
         return res.status(500).json(ERROR_RESPONSE);
     }
 }

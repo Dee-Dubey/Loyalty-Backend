@@ -64,7 +64,6 @@ const downloadExcel = async (result, res, filename) =>{
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       return res.end(excelBuffer);
   }catch(e){
-    ;
       return res.status(500).json({returnCode:1, msg: 'Something went wrong!Please try after sometime'});
   }
 }

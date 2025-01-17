@@ -70,7 +70,7 @@ const addPoints = async (req, res) => {
             totalPointsInAccount: result.totalPointsInAccount
         }, 
         (err, html) => {
-                sendEmail(customer.email, "Welcome to PassMe Point!",'', html);
+                sendEmail(customer.email, "Your Loyalty Points Have Been added !",'', html);
         });
         return res.status(200).json(result);
     }catch(e){
@@ -111,7 +111,7 @@ const redeemPoints = async (req, res) => {
         }, 
         (err, html) => {
                 if(html){
-                    sendEmail(customer.email, "Welcome to PassMe Point!",'', html); 
+                    sendEmail(customer.email, "Your Loyalty Points Have Been Redeemed!",'', html); 
                 }else{
                     console.log(err);
                 }
