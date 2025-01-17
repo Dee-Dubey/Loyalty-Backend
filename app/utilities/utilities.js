@@ -56,10 +56,11 @@ const sendEmail = async(emailTo, subject, text, htmlContent, pdf) =>{
 const downloadExcel = async (result, res, filename) =>{
   try{
       const data = result.map(ele => {
-        if(ele !== null && typeof ele === 'object' && !Array.isArray(ele)){
+        if(ele.hasOwnProperty('isNewRecord')){
+            return ele.toJSON();
+        }else{
           return ele;
         }
-        return ele.toJSON();
       });
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.json_to_sheet(data);
