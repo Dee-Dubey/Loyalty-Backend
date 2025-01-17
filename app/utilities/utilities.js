@@ -55,7 +55,12 @@ const sendEmail = async(emailTo, subject, text, htmlContent, pdf) =>{
 
 const downloadExcel = async (result, res, filename) =>{
   try{
-      const data = result.map(ele => ele.toJSON());
+      const data = result.map(ele => {
+        if(ele !== null && typeof ele === 'object' && !Array.isArray(ele)){
+          return ele;
+        }
+        return ele.toJSON();
+      });
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.json_to_sheet(data);
       XLSX.utils.book_append_sheet(wb, ws, 'clients');
