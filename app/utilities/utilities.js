@@ -24,7 +24,7 @@ const sendEmail = async(emailTo, subject, text, htmlContent, pdf) =>{
           const doc = new PDFDocument();
           doc.pipe(fs.createWriteStream(`pdf/${ts}.pdf`));
           doc.image(imageBuffer, {
-            fit: [600, 300],
+            fit: [450, 300],
             align: 'center',
             valign: 'center',
           });

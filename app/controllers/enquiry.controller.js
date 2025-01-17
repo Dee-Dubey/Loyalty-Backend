@@ -1,8 +1,8 @@
 const { ERROR_RESPONSE } = require("../constants");
 const db = require("../models");
 const { sendEmail, downloadExcel } = require("../utilities/utilities");
-const path = require('path');
 const ejs = require('ejs');
+const QRCode = require('qrcode');
 
 const createEnquiry = async(req, res) => {
     try{
@@ -77,18 +77,23 @@ const convertEnquiryToUser = async(req, res) =>{
                 company_id: company.id
             })
             await db.enqueries.destroy({where:{id:enquiry.id}});
+            const url = `${process.env.FRONTEND_BASE_URL}user/qr?company_id=${company.id}`;
+            const qrCodeImage = await QRCode.toDataURL(url);
+            const base64Data = qrCodeImage.replace(/^data:image\/(png|jpg|jpeg|gif);base64,/, '');
+            ejs.renderFile('app/templates/companyRegistration.ejs', { 
+            name: enquiry.name,
+            username: enquiry.email,
+            password: enquiry.name.split(" ")[0]
+            }, 
+            (err, html) => {
+                if(html){
+                    sendEmail(req.body.email, "Welcome to PassMe Point!",'', html, base64Data);
+                }
+            });
         }
-
-        ejs.renderFile('app/templates/companyRegistration.ejs', { 
-        name: enquiry.name,
-        username: enquiry.email,
-        password: enquiry.name.split(" ")[0],
-        qrCodeImage: `${process.env.BACKEND_BASE_URL}/uploads`}, 
-        (err, html) => {
-                sendEmail(req.body.email, "Welcome to PassMe Point!",'', html);
-        });
         return res.status(200).json(result);
     }catch(e){
+        console.log(e);
         return res.status(500).json(ERROR_RESPONSE);
     }
 }

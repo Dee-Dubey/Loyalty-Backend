@@ -3,6 +3,7 @@ const db = require("../models");
 const { sendEmail, downloadExcel } = require("../utilities/utilities");
 const path = require('path');
 const ejs = require('ejs');
+const { Op } = require("sequelize");
 
 const createEmployee = async(req, res)=>{
     try{
@@ -43,6 +44,15 @@ const createEmployee = async(req, res)=>{
 const getAllEmployees = async(req, res)=>{
     try{
         const filters = JSON.parse(req.query.filters?req.query.filters:'{}');
+        if(filters.where.createdAt){
+            const startOfDay = new Date(`${filters.where.createdAt}T00:00:00Z`); // Start of the day
+            const endOfDay = new Date(`${filters.where.createdAt}T23:59:59Z`); // End of the day
+
+            filters.where = {...filters.where, createdAt: {
+                [Op.gte]: startOfDay,
+                [Op.lte]: endOfDay
+                }}
+        }
         const {company_id, role} = req.data;
         filters.where.company_id = company_id;
         const employees = await db.employees.findAll(filters);
@@ -54,6 +64,7 @@ const getAllEmployees = async(req, res)=>{
         }
         return res.status(200).json({returnCode:0, msg:'employees fetched successfully!', employees, count});
     }catch(e){
+        console.log(e);
         return res.status(500).json(ERROR_RESPONSE);
     }
 }

@@ -107,17 +107,14 @@ const createCustomer = async (req, res) => {
         console.log("url==", url);
         const qrCodeImage = await QRCode.toDataURL(url);
         const base64Data = qrCodeImage.replace(/^data:image\/(png|jpg|jpeg|gif);base64,/, '');
-        const buffer = Buffer.from(base64Data, 'base64');
-        const ts = Date.now();
-        fs.writeFileSync(`public/${ts}.png`, buffer);
         ejs.renderFile(`app/templates/customerRegistration.ejs`, { 
         name: req.body.name,
         username:req.body.email,
-        password: req.body.password,
-        qrCodeImage: `${process.env.BACKEND_BASE_URL}/uploads/${ts}.png`}, 
+        password: req.body.password
+        },
         (err, html) => {
             if(html){
-                sendEmail(req.body.email, "Welcome to PassMe Point!",'', html);
+                sendEmail(req.body.email, "Welcome to PassMe Point!",'', html, base64Data);
             }
         });
         result.qr_code = qrCodeImage;
@@ -143,7 +140,6 @@ const generateOtp = async(req, res) =>{
             sendEmail(req.body.email, "Your One-Time Password (OTP) for Secure Access",'', html);
         }
       });
-      sendEmail(req.body.email, `Your one time password id ${otp}`, ``);
       return res.status(200).json(result);
     }catch(e){
       return res.status(500).json(ERROR_RESPONSE);

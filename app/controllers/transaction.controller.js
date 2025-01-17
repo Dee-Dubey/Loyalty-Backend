@@ -6,6 +6,15 @@ const ejs = require('ejs');
 const getAllTransaction = async (req, res) => {
     try{
         const filters = JSON.parse(req.query.filters?req.query.filters:'{"where":{}}');
+        if(filters.where.createdAt){
+            const startOfDay = new Date(`${filters.where.createdAt}T00:00:00Z`); // Start of the day
+            const endOfDay = new Date(`${filters.where.createdAt}T23:59:59Z`); // End of the day
+
+            filters.where = {...filters.where, createdAt: {
+                [Op.gte]: startOfDay,
+                [Op.lte]: endOfDay
+                }}
+        }
         const result = {returnCode: 0 }
         const { company_id, user_id, role, customer_id, branch } = req.data;
         if(role === 'admin'){
