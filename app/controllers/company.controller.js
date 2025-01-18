@@ -39,6 +39,7 @@ const createCompany = async(req, res) => {
             password: user.password
         }, 
         (err, html) => {
+            console.log(err);
             if(!err){
                 sendEmail(req.body.email, "Welcome to PassMe Point!",'', html, base64Data);
             }
