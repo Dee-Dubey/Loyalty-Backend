@@ -24,6 +24,10 @@ const transactions_history = (sequelize, DataTypes)=>{
             type: DataTypes.INTEGER,
             allowNull: false
         },
+        company_name: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
         customer_name: {
             type: DataTypes.STRING,
             defaultValue: null

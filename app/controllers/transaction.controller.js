@@ -2,6 +2,7 @@ const db = require("../models");
 const { sendEmail, downloadExcel } = require("../utilities/utilities");
 const path = require('path');
 const ejs = require('ejs');
+const { Op } = require("sequelize");
 
 const getAllTransaction = async (req, res) => {
     try{
@@ -58,6 +59,8 @@ const addPoints = async (req, res) => {
     try{
         const result = {returnCode: 0 }
         const { company_id, user_id, username, branch } = req.data;
+        const customer = await db.customers.findOne({where:{id: req.body.customer_id}});
+        const company = await db.companies.findOne({where:{id: company_id}});
         const data = await db.inward_rules.findOne({where: {company_id}});
         result.previousBalance = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id, company_id}});
         if(!data){
@@ -65,12 +68,10 @@ const addPoints = async (req, res) => {
         }
         const { amount } = data;
         req.body.point = parseInt(req.body.amount/amount);
-        await db.transactions_history.create({...req.body,invoice_no:req.body.invoiceNo, company_id, created_by: user_id, username, branch});
+        await db.transactions_history.create({...req.body,invoice_no:req.body.invoiceNo, company_id, created_by: user_id, username, branch, company_name: company.name});
         result.currentBalance = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id, company_id}});
         result.totalPointsInAccount = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id}});
         result.msg = 'points added successfully!';
-        const customer = await db.customers.findOne({where:{id: req.body.customer_id}});
-        const company = await db.companies.findOne({where:{id: company_id}});
         ejs.renderFile('app/templates/add.ejs', { 
             name: customer.name,
             businessName: company.businessName,
@@ -92,6 +93,8 @@ const redeemPoints = async (req, res) => {
     try{
         const result = {returnCode: 0 }
         const { company_id, user_id, username, branch } = req.data;
+        const customer = await db.customers.findOne({where:{id: req.body.customer_id}});
+        const company = await db.companies.findOne({where:{id: company_id}});
         const outward = await db.outward_rules.findOne({where: {company_id}});
         result.previousBalance = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id, company_id}});
         if(!outward){
@@ -105,11 +108,9 @@ const redeemPoints = async (req, res) => {
         }
         req.body.value = req.body.point * outward.amount;
         req.body.point= -req.body.point;
-        await db.transactions_history.create({...req.body, company_id, created_by: user_id, username, branch});
+        await db.transactions_history.create({...req.body, company_id, created_by: user_id, username, branch, company_name: company.name});
         result.currentBalance = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id, company_id}});
         result.msg = 'redeemed successfully!';
-        const customer = await db.customers.findOne({where:{id: req.body.customer_id}});
-        const company = await db.companies.findOne({where:{id: company_id}});
         result.totalPointsInAccount = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id}});
         ejs.renderFile('app/templates/redeem.ejs', { 
             name: customer.name,
