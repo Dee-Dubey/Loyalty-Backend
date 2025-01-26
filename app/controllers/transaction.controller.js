@@ -7,6 +7,21 @@ const { Op } = require("sequelize");
 const getAllTransaction = async (req, res) => {
     try{
         const filters = JSON.parse(req.query.filters?req.query.filters:'{"where":{}}');
+        if(filters.where.searchParam){
+            const txnId = (filters.where.searchParam.split("-"))[1];
+            if(txnId){
+                filters.where = {...filters.where, id:parseInt(txnId)} 
+            }
+            filters.where = {
+                ...filters.where, 
+                [Op.or]: [
+                {branch: {[Op.like]: filters.where.searchParam}},
+                {company_name: {[Op.like]: filters.where.searchParam}},
+                {customer_name: {[Op.like]: filters.where.searchParam}},
+                ]
+            }
+            delete filters.where.searchParam
+        }
         if(filters.where.createdAt){
             const startOfDay = new Date(`${filters.where.createdAt}T00:00:00Z`); // Start of the day
             const endOfDay = new Date(`${filters.where.createdAt}T23:59:59Z`); // End of the day
@@ -18,7 +33,10 @@ const getAllTransaction = async (req, res) => {
         }
         const result = {returnCode: 0 }
         const { company_id, user_id, role, customer_id, branch } = req.data;
-        if(role === 'admin'){
+        if(filters.where.id){
+            const data = await db.transactions_history.findOne({where: {id: filters.where.id}})
+            result.data = [data]
+        }else if(role === 'admin'){
             result.data = await db.transactions_history.findAll(filters);
         }else if(role === 'superuser'){
             filters.where.company_id = company_id;
@@ -33,6 +51,7 @@ const getAllTransaction = async (req, res) => {
         }
         filters.limit = null;
         filters.offset = null;
+        console.log(JSON.stringify(filters));
         result.count = await db.transactions_history.count(filters);
         if(req.query.download){
             return downloadExcel(result.data, res, 'transactions');
