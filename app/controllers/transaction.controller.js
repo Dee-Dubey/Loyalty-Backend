@@ -68,7 +68,7 @@ const addPoints = async (req, res) => {
         }
         const { amount } = data;
         req.body.point = parseInt(req.body.amount/amount);
-        await db.transactions_history.create({...req.body,invoice_no:req.body.invoiceNo, company_id, created_by: user_id, username, branch, company_name: company.name});
+        await db.transactions_history.create({...req.body,invoice_no:req.body.invoiceNo, company_id, created_by: user_id, username, branch, company_name: company.businessName});
         result.currentBalance = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id, company_id}});
         result.totalPointsInAccount = await db.transactions_history.sum('point', {where:{customer_id:req.body.customer_id}});
         result.msg = 'points added successfully!';
