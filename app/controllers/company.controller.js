@@ -113,7 +113,7 @@ const getCompanyWisePoints = async (req,res) => {
     try{
         const {company_id} = req.data;
         const result = await db.query(`select
-                            c."name" ,
+                            "name" ,
                             sum(th.point) points
                         from
                             transactions_histories th,

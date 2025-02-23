@@ -21,7 +21,6 @@ const login = async (req, res) => {
         }
         return res.status(200).json({returnCode: 1, msg: 'Login Failed!', result:{} });
     }catch(e){
-        ;
         return res.status(500).json({returnCode: 1, msg: 'Something went wrong!' });
     }
 }

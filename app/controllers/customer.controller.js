@@ -19,11 +19,11 @@ const getAllCustomer = async (req, res) => {
         const limit = filters.limit?filters.limit:5;
         const offset = filters.offset?filters.offset:0;
         let conditions = role=== 'admin'? '':role==='superuser'?`and cm.company_id =${company_id}`:role==='user'?`and cm.user_id =${user_id}`:'';
-        conditions += filters.name?` and c."name" like '%${filters.name}%'`:'';
+        conditions += filters.name?` and "name" like '%${filters.name}%'`:'';
         console.log("conditions==", conditions);
         const query = `select
                                 distinct c.id,
-                                c."name" ,
+                                "name" ,
                                 c.email,
                                 c.address,
                                 c.status,
