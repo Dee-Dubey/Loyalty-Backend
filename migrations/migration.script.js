@@ -1,10 +1,10 @@
 const dataMigration = async(db)=>{
     try{
-        const admin = await await db.users.findOne({where:{username:'admin@noemail.com'}});
+        const admin = await await db.users.findOne({where:{username:'info@buypassme.com'}});
         if(!admin){
             let result = await db.users.create({
-                username: 'admin@noemail.com',
-                password:'123456',
+                username: 'info@buypassme.com',
+                password:'Albert@2025',
                 role:'admin',
                 status: true,
                 company_id: 0
