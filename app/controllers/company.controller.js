@@ -41,7 +41,7 @@ const createCompany = async(req, res) => {
         (err, html) => {
             console.log(err);
             if(!err){
-                sendEmail(req.body.email, "Welcome to PassMe Point!",'', html, base64Data);
+                sendEmail(req.body.email, "Welcome to Pointbox!",'', html, base64Data);
             }
         });
         const result = {returnCode:0, url, qrCodeImage, company, user}

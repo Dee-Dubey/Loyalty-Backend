@@ -31,7 +31,7 @@ const createEmployee = async(req, res)=>{
         (err, html) => {
             console.log(err);
             if(html){
-                sendEmail(req.body.email, "Welcome to PassMe Point!",'', html);
+                sendEmail(req.body.email, "Welcome to Pointbox!",'', html);
             }
         });
         return res.status(200).json({returnCode:0, msg:'employee created successfully!', employee, user});

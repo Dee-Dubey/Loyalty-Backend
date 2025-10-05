@@ -114,7 +114,7 @@ const createCustomer = async (req, res) => {
         },
         (err, html) => {
             if(html){
-                sendEmail(req.body.email, "Welcome to PassMe Point!",'', html, base64Data);
+                sendEmail(req.body.email, "Welcome to Pointbox!",'', html, base64Data);
             }
         });
         result.qr_code = qrCodeImage;
