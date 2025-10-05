@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false, // Use `true` for port 465, `false` for all other ports
   auth: {
-    user: "Info@pointbox.me",
+    user: "info@pointbox.me",
     pass: "Info@pointbox2025"
   },
 });
@@ -31,7 +31,7 @@ const sendEmail = async(emailTo, subject, text, htmlContent, pdf) =>{
           doc.end();
         }
         const mailOptions = {
-            from: '"Pointbox" <info@buypassme.com>', // sender address
+            from: '"Pointbox" <Info@pointbox.me>', // sender address
             to: emailTo,
             subject: subject,
             text: text,
@@ -46,7 +46,7 @@ const sendEmail = async(emailTo, subject, text, htmlContent, pdf) =>{
           ]
         }
         const info = await transporter.sendMail(mailOptions);
-        console.log("Message sent: %s", info.messageId);
+        console.log("Message sent: %s", info.messageId, emailTo);
     }catch(e){
       console.log(e);
         console.log("error in sending email...");
