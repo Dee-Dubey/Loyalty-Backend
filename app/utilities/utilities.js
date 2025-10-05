@@ -11,8 +11,8 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false, // Use `true` for port 465, `false` for all other ports
   auth: {
-    user: "info@pointbox.me",
-    pass: "Info@pointbox2025"
+    user: "info@buypassme.com",
+    pass: "Info@buypassme2021"
   },
 });
 
@@ -31,7 +31,7 @@ const sendEmail = async(emailTo, subject, text, htmlContent, pdf) =>{
           doc.end();
         }
         const mailOptions = {
-            from: '"Pointbox" <Info@pointbox.me>', // sender address
+            from: '"Pointbox" <info@buypassme.com>', // sender address
             to: emailTo,
             subject: subject,
             text: text,
