@@ -1,11 +1,11 @@
 const inward_rules = (sequelize, DataTypes)=>{
     return sequelize.define('inward_rules', {
         points: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.DOUBLE(10, 2),
             allowNull: false
         },
         amount: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.DOUBLE(10, 2),
             allowNull: false
         },
         company_id: {
