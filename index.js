@@ -10,7 +10,10 @@ const path = require('path');
 app.use(helmet());
 app.use(cors());
 app.use('/api/uploads', express.static(path.join(__dirname, 'public')));
-
+app.use(function (req, res, next) {
+    console.log(`Request URL: ${req.originalUrl} - Method: ${req.method} - IP: ${req.ip}`);
+    next();
+});
 app.use('/', require('./router'));
 
 app.use(function (req, res, next) {
