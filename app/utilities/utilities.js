@@ -31,7 +31,7 @@ const sendEmail = async(emailTo, subject, text, htmlContent, pdf) =>{
           doc.end();
         }
         const mailOptions = {
-            from: '"Pointbox" <info@buypassme.com>', // sender address
+            from: '"Pointbox" <info@pointbox.me>', // sender address
             to: emailTo,
             subject: subject,
             text: text,
