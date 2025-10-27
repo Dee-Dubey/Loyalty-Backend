@@ -240,7 +240,7 @@ const getMerchantWisePoints = async (req,res) => {
 const getQRCode = async (req,res) => {
     try{
         const {customer_id} = req.data;
-        const url = `${process.env.FRONTEND_BASE_URL}customer/qr?id=${customer_id}`;
+        const url = `${process.env.FRONTEND_BASE_URL}transaction-form/${customer_id}`;
         const qrCodeImage = await QRCode.toDataURL(url);
         return res.status(200).json({returnCode:0, msg:'QR generated successfully!', qrCodeImage, url})
     }catch(e){
