@@ -13,14 +13,12 @@ const ejs = require('ejs');
 const getAllCustomer = async (req, res) => {
     try{
         const filters = JSON.parse(req.query.filters?req.query.filters:'{}');
-        console.log("filters==", filters);
         const result = {returnCode: 0 }
         const { user_id, company_id, role } = req.data;
         const limit = filters.limit?filters.limit:5;
         const offset = filters.offset?filters.offset:0;
         let conditions = role=== 'admin'? '':role==='superuser'?`and cm.company_id =${company_id}`:role==='user'?`and cm.user_id =${user_id}`:'';
         conditions += filters.name?` and "name" like '%${filters.name}%'`:'';
-        console.log("conditions==", conditions);
         const query = `select
                                 distinct c.id,
                                 "name" ,
@@ -222,7 +220,7 @@ const getMerchantWisePoints = async (req,res) => {
     try{
         const {customer_id} = req.data;
         const result = await db.query(`select
-                            c."businessName",
+                            c.businessName,
                             sum(point) points
                         from
                             transactions_histories th ,
@@ -231,10 +229,10 @@ const getMerchantWisePoints = async (req,res) => {
                             th.company_id = c.id
                             and th.customer_id = ${customer_id}
                         group by
-                            c."businessName"`);
+                            c.businessName`);
         return res.status(200).json({returnCode:0, msg:'', data: result[0]})
     }catch(e){
-        
+        console.log(e);
         return res.status(500).json(ERROR_RESPONSE);
     }
 }
