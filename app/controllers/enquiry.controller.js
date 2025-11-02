@@ -77,7 +77,7 @@ const convertEnquiryToUser = async(req, res) =>{
                 company_id: company.id
             })
             await db.enqueries.destroy({where:{id:enquiry.id}});
-            const url = `${process.env.FRONTEND_BASE_URL}user/qr?company_id=${company.id}`;
+            const url = `${process.env.FRONTEND_BASE_URL}create-customer`;
             const qrCodeImage = await QRCode.toDataURL(url);
             const base64Data = qrCodeImage.replace(/^data:image\/(png|jpg|jpeg|gif);base64,/, '');
             ejs.renderFile('app/templates/companyRegistration.ejs', { 

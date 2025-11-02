@@ -96,13 +96,12 @@ const createCustomer = async (req, res) => {
                 address: customerDetails.address,
                 createdAt: moment(customerDetails.createdAt).format('YYYY-MM-DD HH:mm:ss')
             };
-            result.qr_code = await QRCode.toDataURL(`${process.env.FRONTEND_BASE_URL}customer/qr?id=${customerDetails.id}`);
+            result.qr_code = await QRCode.toDataURL(`${process.env.FRONTEND_BASE_URL}transaction-form/${customerDetails.id}`);
             return res.status(200).json(result);
         }
         const data = await db.customers.create({...req.body});
         await db.customer_mappings.create({customer_id:data.id, company_id: req.body.company_id});
-        const url = `${process.env.FRONTEND_BASE_URL}customer/qr?id=${data.id}`;
-        console.log("url==", url);
+        const url = `${process.env.FRONTEND_BASE_URL}transaction-form/${data.id}`;
         const qrCodeImage = await QRCode.toDataURL(url);
         const base64Data = qrCodeImage.replace(/^data:image\/(png|jpg|jpeg|gif);base64,/, '');
         ejs.renderFile(`app/templates/customerRegistration.ejs`, { 
